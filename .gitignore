@@ -1,2 +1,4 @@
 documentation-hidden
 venv
+.env
+models
