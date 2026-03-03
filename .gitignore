@@ -2,3 +2,4 @@ documentation-hidden
 venv
 .env
 models_new
+config_new
