@@ -1,29 +1,74 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+
+const { DataTypes } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+
+  const User = sequelize.define('User', {
+
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+
+    fname: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    lname: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    password_hash: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
     }
-  }
-  User.init({
-    fname: DataTypes.STRING,
-    lname: DataTypes.STRING,
-    email: DataTypes.STRING,
-    phone: DataTypes.STRING,
-    password_hash: DataTypes.STRING,
-    role: DataTypes.STRING,
-    created_at: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'User',
-  });
+
+  }, {});
+
+  User.associate = function(models) {
+
+    // 1:1 Customer
+    User.hasOne(models.Customer, {
+      foreignKey: 'user_id'
+    });
+
+    // 1:1 LoanOfficer
+    User.hasOne(models.LoanOfficer, {
+      foreignKey: 'user_id'
+    });
+
+    // 1:1 Investor
+    User.hasOne(models.Investor, {
+      foreignKey: 'user_id'
+    });
+
+  };
+
   return User;
 };

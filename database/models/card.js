@@ -1,28 +1,59 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+
+const { DataTypes } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
-  class Card extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+
+  const Card = sequelize.define('Card', {
+
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+
+    account_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+
+    card_number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
+    },
+
+    card_type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    expiry_date: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+
+    cvv_hash: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'active'
     }
-  }
-  Card.init({
-    account_id: DataTypes.INTEGER,
-    card_number: DataTypes.STRING,
-    card_type: DataTypes.STRING,
-    expiry_date: DataTypes.DATE,
-    cvv_hash: DataTypes.STRING,
-    status: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Card',
-  });
+
+  }, {});
+
+  Card.associate = function(models) {
+
+    // each Card belongs to one Account
+    Card.belongsTo(models.Account, {
+      foreignKey: 'account_id'
+    });
+
+  };
+
   return Card;
 };

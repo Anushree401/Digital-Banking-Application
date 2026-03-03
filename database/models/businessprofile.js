@@ -1,26 +1,48 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+
+const { DataTypes } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
-  class BusinessProfile extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+
+  const BusinessProfile = sequelize.define('BusinessProfile', {
+
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+
+    customer_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true
+    },
+
+    company_name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    gst_number: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    reg_no: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
-  }
-  BusinessProfile.init({
-    customer_id: DataTypes.INTEGER,
-    company_name: DataTypes.STRING,
-    gst_number: DataTypes.STRING,
-    reg_no: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'BusinessProfile',
-  });
+
+  }, {});
+
+  BusinessProfile.associate = function(models) {
+
+    // each BusinessProfile belongs to one Customer
+    BusinessProfile.belongsTo(models.Customer, {
+      foreignKey: 'customer_id'
+    });
+
+  };
+
   return BusinessProfile;
 };

@@ -1,28 +1,53 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  class Offer extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+
+  const Offer = sequelize.define('Offer', {
+
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
+
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+
+    valid_from: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+
+    valid_to: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+
+    offer_type: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+
+    eligibility_criteria: {
+      type: DataTypes.TEXT,
+      allowNull: false
     }
-  }
-  Offer.init({
-    title: DataTypes.STRING,
-    description: DataTypes.TEXT,
-    valid_from: DataTypes.DATE,
-    valid_to: DataTypes.DATE,
-    offer_type: DataTypes.STRING,
-    eligibility_criteria: DataTypes.TEXT
-  }, {
-    sequelize,
-    modelName: 'Offer',
-  });
+
+  }, {});
+
+  Offer.associate = function(models) {
+
+    // Optional: define many-to-many with Customer if you create a junction table
+    // Offer.belongsToMany(models.Customer, { through: models.CustomerOffer });
+
+  };
+
   return Offer;
 };
