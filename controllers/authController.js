@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const path = require('path');
 
 exports.showLogin = (req,res) => {
     res.sendFile(path.join(__dirname, '../views/shared/login.html'));
@@ -33,6 +34,24 @@ exports.loginUser = async (req,res) => {
 
     } catch (err) {
         return res.redirect('/auth/login?error=invalid');
+    }
+
+};
+
+exports.showRegister = (req,res) => {
+    res.sendFile(path.join(__dirname, '../views/shared/register.html'));
+};
+
+exports.registerUser = async (req,res) => {
+
+    const { fname, lname, email, password, phone, role } = req.body;
+
+    try {
+        await authService.register(fname,lname,email,password,phone,role);
+        res.redirect('/auth/login');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/auth/register?error=exists');
     }
 
 };
