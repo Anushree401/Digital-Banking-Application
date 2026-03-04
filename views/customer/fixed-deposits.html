@@ -8,13 +8,62 @@
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <header>
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Broke Guy</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
     </header>
-    <nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="accounts.html">Accounts</a></li>
+            <li class="nav-item"><a href="transactions.html">Transactions</a></li>
+            <li class="nav-item"><a href="cards.html">Cards</a></li>
+            <li class="nav-item"><a href="loans.html">Loans</a></li>
+            <li class="nav-item active"><a href="fixed-deposits.html">Fixed Deposits</a></li>
+            <li class="nav-item"><a href="investments.html">Investments</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="support.html">Support</a></li>
+        </ul>
     </nav>
-    <main>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="welcome-section">
+                <h2>Fixed Deposits</h2>
+                <p class="date">Manage your fixed deposit accounts</p>
+            </section>
+
+            <section class="accounts-overview">
+                <h3>Active Fixed Deposits</h3>
+                <div id="fdList">
+                </div>
+            </section>
+
+            <section class="quick-actions">
+                <h3>FD Actions</h3>
+                <div class="actions-grid">
+                    <button class="action-btn" id="openFdBtn">Open New FD</button>
+                    <button class="action-btn" id="renewFdBtn">Renew FD</button>
+                    <button class="action-btn" id="breakFdBtn">Break FD</button>
+                    <button class="action-btn" id="fdRatesBtn">View Rates</button>
+                </div>
+            </section>
+        </div>
     </main>
-    <footer>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
     </footer>
     <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/customer/fixed-deposits.js"></script>

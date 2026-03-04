@@ -8,13 +8,91 @@
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <header>
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Broke Guy</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
     </header>
-    <nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="accounts.html">Accounts</a></li>
+            <li class="nav-item active"><a href="transactions.html">Transactions</a></li>
+            <li class="nav-item"><a href="cards.html">Cards</a></li>
+            <li class="nav-item"><a href="loans.html">Loans</a></li>
+            <li class="nav-item"><a href="fixed-deposits.html">Fixed Deposits</a></li>
+            <li class="nav-item"><a href="investments.html">Investments</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="support.html">Support</a></li>
+        </ul>
     </nav>
-    <main>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="welcome-section">
+                <h2>Transaction History</h2>
+                <p class="date">View all your transactions</p>
+            </section>
+
+            <section class="filter-section">
+                <div class="filter-group">
+                    <label>Account</label>
+                    <select id="accountFilter">
+                        <option value="all">All Accounts</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Transaction Type</label>
+                    <select id="typeFilter">
+                        <option value="all">All Types</option>
+                        <option value="credit">Credit</option>
+                        <option value="debit">Debit</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Date From</label>
+                    <input type="date" id="dateFrom">
+                </div>
+                <div class="filter-group">
+                    <label>Date To</label>
+                    <input type="date" id="dateTo">
+                </div>
+            </section>
+
+            <section class="recent-transactions">
+                <h3>All Transactions</h3>
+                <div class="transactions-table">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Account</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsBody">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
     </main>
-    <footer>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
     </footer>
     <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/customer/transactions.js"></script>

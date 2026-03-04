@@ -8,13 +8,104 @@
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <header>
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Broke Guy</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
     </header>
-    <nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item active"><a href="index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="accounts.html">Accounts</a></li>
+            <li class="nav-item"><a href="transactions.html">Transactions</a></li>
+            <li class="nav-item"><a href="cards.html">Cards</a></li>
+            <li class="nav-item"><a href="loans.html">Loans</a></li>
+            <li class="nav-item"><a href="fixed-deposits.html">Fixed Deposits</a></li>
+            <li class="nav-item"><a href="investments.html">Investments</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="support.html">Support</a></li>
+        </ul>
     </nav>
-    <main>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="welcome-section">
+                <h2>Welcome back, <span id="welcomeName">John</span>!</h2>
+                <p class="date" id="currentDate"></p>
+            </section>
+
+            <section class="quick-stats">
+                <div class="stat-card">
+                    <h3>Total Balance</h3>
+                    <p class="stat-value" id="totalBalance">$0.00</p>
+                    <span class="stat-label">Across all accounts</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Monthly Income</h3>
+                    <p class="stat-value" id="monthlyIncome">$0.00</p>
+                    <span class="stat-label">This month</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Monthly Expenses</h3>
+                    <p class="stat-value" id="monthlyExpenses">$0.00</p>
+                    <span class="stat-label">This month</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Loans</h3>
+                    <p class="stat-value" id="activeLoans">0</p>
+                    <span class="stat-label">Currently active</span>
+                </div>
+            </section>
+
+            <section class="accounts-overview">
+                <h3>Account Overview</h3>
+                <div class="accounts-list" id="accountsList">
+                </div>
+            </section>
+
+            <section class="recent-transactions">
+                <h3>Recent Transactions</h3>
+                <div class="transactions-table">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsBody">
+                        </tbody>
+                    </table>
+                </div>
+                <a href="transactions.html" class="view-all-link">View All Transactions</a>
+            </section>
+
+            <section class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="actions-grid">
+                    <button class="action-btn" id="transferBtn">Transfer Money</button>
+                    <button class="action-btn" id="payBillBtn">Pay Bills</button>
+                    <button class="action-btn" id="depositBtn">Deposit</button>
+                    <button class="action-btn" id="applyLoanBtn">Apply for Loan</button>
+                </div>
+            </section>
+        </div>
     </main>
-    <footer>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
     </footer>
     <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/customer/dashboard.js"></script>
