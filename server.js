@@ -1,15 +1,14 @@
 const express = require('express');
-const router = express.Router();
 const session = require('express-session');
 const dotenv = require('dotenv');
 const { sequelize } = require('./database/models');
+const path = require('path');
 
 const app = express();
+dotenv.config();
+const secret_key = process.env.SECRET_KEY_APP;
 
 // basic config 
-app.set('view engine', 'ejs'); // set view engine to ejs for rendering views (to keep it unified with the rest of the codebase)
-app.set('views',path.join(__dirname, 'views')); // set views directory
-
 app.use(express.urlencoded({ extended: true })); // middleware to parse urlencoded form data
 app.use(express.json()); // middleware to parse JSON data
 app.use(express.static(path.join(__dirname, 'public'))); // serve static files from the public directory (for CSS, JS, images, etc.)
@@ -17,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public'))); // serve static files f
 //session config 
 app.use(
     session({
-        secret: dotenv.config().parsed.SECRET_KEY_APP,
+        secret: secret_key,
         resave: false,
         saveUninitialized: false,
         cookie: { secure: false }, // set to true if using HTTPS (no need for secure cookies in development)
@@ -30,14 +29,12 @@ app.use((req,res,next)=>{
     next();
 });
 
-// routes
-
+// serve HTML files
 app.get('/', (req, res) => {
-    res.render('index'); // render the home page (index.ejs)
+  res.sendFile(path.join(__dirname, 'views', 'shared', 'index.html'));
 });
 
 // auth routes
-
 const authRoutes = require('./routes/authRoutes');
 app.use('/auth', authRoutes);
 
