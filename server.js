@@ -11,7 +11,10 @@ const secret_key = process.env.SECRET_KEY_APP;
 // basic config 
 app.use(express.urlencoded({ extended: true })); // middleware to parse urlencoded form data
 app.use(express.json()); // middleware to parse JSON data
-app.use(express.static(path.join(__dirname, 'public'))); // serve static files from the public directory (for CSS, JS, images, etc.)
+app.use(
+  '/css',
+  express.static(path.join(__dirname, 'views/shared/css'))
+); // serve static files from the public directory (for CSS, JS, images, etc.)
 
 //session config 
 app.use(
