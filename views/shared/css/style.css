@@ -41,8 +41,18 @@ height:70px;
 }
 
 .logo{
+display:flex;
+align-items:center;
+gap:10px;
 font-weight:600;
 font-size:20px;
+}
+
+.logo img{
+height:36px;
+width:auto;
+opacity:0.9;
+filter:contrast(1.1);
 }
 
 .nav-links a{
@@ -236,6 +246,14 @@ margin-bottom:10px;
 text-align:center;
 color:#7a8f99;
 }
+
+.footer-brand{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+
 
 /* HERO WRAPPER */
 
