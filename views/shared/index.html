@@ -32,8 +32,11 @@
 </header>
 
 
-<section class="hero">
-<div class="container hero-inner">
+<section class="hero-wrapper">
+
+<div class="hero-bg"></div>
+
+<div class="hero-card">
 
 <h1>Secure Digital Banking Platform</h1>
 
@@ -44,10 +47,11 @@ and personalized financial services.
 
 <div class="hero-buttons">
 <button class="primary">Open Account →</button>
-<button class="secondary">Login</button>
+<a href="/auth/login" class="secondary">Login</a>
 </div>
 
 </div>
+
 </section>
 
 
@@ -137,5 +141,28 @@ and personalized financial services.
 
 </footer>
 <!-- <script src="../middleware/shared/main.js"></script> -->
+
+<script>
+
+const cards = document.querySelectorAll(".card");
+
+const observer = new IntersectionObserver(entries => {
+
+entries.forEach(entry => {
+
+if(entry.isIntersecting){
+entry.target.classList.add("show");
+}
+
+});
+
+});
+
+cards.forEach(card => {
+observer.observe(card);
+});
+
+</script>
+
 </body>
 </html>

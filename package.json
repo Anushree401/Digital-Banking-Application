@@ -12,5 +12,20 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
     "sequelize-cli": "^6.6.5"
-  }
+  },
+  "name": "digital-banking-application",
+  "version": "1.0.0",
+  "description": "Full stack digital banking system with a simulation of core banking processes such as account management, funds transfer, loans, fixed deposits, card management, investor management, and admin management.",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anushree401/Digital-Banking-Application.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Anushree401/Digital-Banking-Application/issues"
+  },
+  "homepage": "https://github.com/Anushree401/Digital-Banking-Application#readme"
 }
