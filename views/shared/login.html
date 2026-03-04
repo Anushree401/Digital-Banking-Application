@@ -30,12 +30,20 @@
 
     <button type="submit">Login</button>
 
-    <% if (error) { %>
-        <p class="error"><%= error %></p>
-    <% } %>
+    <p id="error-message" style="color:red;"></p>
+
+    <script>
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get("error");
+
+    if (error) {
+        document.getElementById("error-message").innerText =
+        "Invalid email or password";
+    }
+    </script>
     </form>
 
-    <script src="../middleware/shared/main.js"></script>
-    <script src="../middleware/shared/auth.js"></script>
+    <!-- <script src="../middleware/shared/main.js"></script>
+    <script src="../middleware/shared/auth.js"></script> -->
 </body>
 </html>

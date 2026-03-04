@@ -1,7 +1,7 @@
 const authService = require('../services/authService');
 
 exports.showLogin = (req,res) => {
-    res.render('login');
+    res.sendFile(path.join(__dirname, '../views/shared/login.html'));
 };
 
 exports.loginUser = async (req,res) => {
@@ -26,8 +26,13 @@ exports.loginUser = async (req,res) => {
         else if (user.role === 'admin') {
             res.redirect('/admin/dashboard');
         }
+
+        // const fullPath = path.join(__dirname, '../views/shared/login.html');
+        // console.log(fullPath);
+        // res.sendFile(fullPath);
+
     } catch (err) {
-        return res.render('auth/login', { error: err.message });
+        return res.redirect('/auth/login?error=invalid');
     }
 
 };
