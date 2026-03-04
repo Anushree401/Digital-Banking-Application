@@ -4,3 +4,4 @@ venv
 models_new
 config_new
 node_modules
+node_modules/
