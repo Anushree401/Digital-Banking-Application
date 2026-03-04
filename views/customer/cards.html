@@ -8,13 +8,62 @@
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <header>
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Broke Guy</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
     </header>
-    <nav>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="accounts.html">Accounts</a></li>
+            <li class="nav-item"><a href="transactions.html">Transactions</a></li>
+            <li class="nav-item active"><a href="cards.html">Cards</a></li>
+            <li class="nav-item"><a href="loans.html">Loans</a></li>
+            <li class="nav-item"><a href="fixed-deposits.html">Fixed Deposits</a></li>
+            <li class="nav-item"><a href="investments.html">Investments</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="support.html">Support</a></li>
+        </ul>
     </nav>
-    <main>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="welcome-section">
+                <h2>My Cards</h2>
+                <p class="date">Manage your credit and debit cards</p>
+            </section>
+
+            <section class="accounts-overview">
+                <h3>Active Cards</h3>
+                <div id="cardsList">
+                </div>
+            </section>
+
+            <section class="quick-actions">
+                <h3>Card Actions</h3>
+                <div class="actions-grid">
+                    <button class="action-btn" id="applyCardBtn">Apply for New Card</button>
+                    <button class="action-btn" id="blockCardBtn">Block Card</button>
+                    <button class="action-btn" id="setPinBtn">Set PIN</button>
+                    <button class="action-btn" id="cardLimitsBtn">Manage Limits</button>
+                </div>
+            </section>
+        </div>
     </main>
-    <footer>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
     </footer>
     <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/customer/cards.js"></script>

@@ -1,6 +1,10 @@
 {
+  "scripts": {
+    "start": "http-server -p 8000 -o /views/customer/index.html"
+  },
   "dependencies": {
     "dotenv": "^17.3.1",
+    "http-server": "^14.1.1",
     "pg": "^8.19.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.7",
