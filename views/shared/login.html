@@ -1,49 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Digital Banking</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login | BrokeBank</title>
+
+<link rel="stylesheet" href="css/style.css">
+
 </head>
-<body>
-    <header>
-    </header>
-    <nav>
-    </nav>
-    <main>
-    </main>
-    <footer>
-    </footer>
 
-    <!-- basic template, khudse edit kar lena but this shld be there -->
+<body class="login-layout">
 
-    <form action="/auth/login" method="POST" class="form-container">
-    <h2>Login</h2>
+<!-- LEFT PANEL -->
 
-    <label>Email</label>
-    <input type="email" name="email" required />
+<div class="login-brand">
 
-    <label>Password</label>
-    <input type="password" name="password" required />
+<div class="brand-top">
+<img src="assets/brokebank_logo.svg" alt="BrokeBank logo">
+<span>BrokeBank</span>
+</div>
 
-    <button type="submit">Login</button>
+<div class="brand-content">
 
-    <p id="error-message" style="color:red;"></p>
+<h1>Welcome to BrokeBank</h1>
 
-    <script>
-    const params = new URLSearchParams(window.location.search);
-    const error = params.get("error");
+<p>
+Smart, secure and simple digital banking.
+Access your account and manage your finances anywhere.
+</p>
 
-    if (error) {
-        document.getElementById("error-message").innerText =
-        "Invalid email or password";
-    }
-    </script>
-    </form>
+</div>
 
-    <!-- <script src="../middleware/shared/main.js"></script>
-    <script src="../middleware/shared/auth.js"></script> -->
+</div>
+
+<!-- RIGHT PANEL -->
+
+<div class="login-panel">
+
+<div class="login-box">
+
+<h2>Sign In</h2>
+
+<p class="login-desc">
+Enter your email and password to continue
+</p>
+
+<form action="/auth/login" method="POST" class="login-form">
+
+<label>Email Address</label>
+<input type="email" name="email" placeholder="you@example.com" required>
+
+<label>Password</label>
+<input type="password" name="password" placeholder="••••••••" required>
+
+<div class="login-options">
+
+<label>
+<input type="checkbox"> Remember me
+</label>
+
+<a href="#">Forgot password?</a>
+
+</div>
+
+<button type="submit">Login</button>
+
+<p id="error-message"></p>
+
+</form>
+
+<p class="register-link">
+Don't have an account?
+<a href="/auth/register">Register</a>
+</p>
+
+</div>
+
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const error = params.get("error");
+
+if (error) {
+document.getElementById("error-message").innerText =
+"Invalid email or password";
+}
+</script>
+
 </body>
 </html>
