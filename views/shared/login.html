@@ -16,6 +16,25 @@
     </main>
     <footer>
     </footer>
+
+    <!-- basic template, khudse edit kar lena but this shld be there -->
+
+    <form action="/auth/login" method="POST" class="form-container">
+    <h2>Login</h2>
+
+    <label>Email</label>
+    <input type="email" name="email" required />
+
+    <label>Password</label>
+    <input type="password" name="password" required />
+
+    <button type="submit">Login</button>
+
+    <% if (error) { %>
+        <p class="error"><%= error %></p>
+    <% } %>
+    </form>
+
     <script src="../middleware/shared/main.js"></script>
     <script src="../middleware/shared/auth.js"></script>
 </body>
