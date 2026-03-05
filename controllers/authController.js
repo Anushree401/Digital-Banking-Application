@@ -24,9 +24,6 @@ exports.loginUser = async (req,res) => {
         else if (user.role === 'investor') {
             res.redirect('/investor/dashboard');
         }
-        else if (user.role === 'admin') {
-            res.redirect('/admin/dashboard');
-        }
 
         // const fullPath = path.join(__dirname, '../views/shared/login.html');
         // console.log(fullPath);

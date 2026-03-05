@@ -15,6 +15,10 @@ app.use(
   '/css',
   express.static(path.join(__dirname, 'views/shared/css'))
 ); // serve static files from the public directory (for CSS, JS, images, etc.)
+app.use(
+  '/assets',
+  express.static(path.join(__dirname, 'views/shared/assets'))
+); // serve static files from the public directory (for CSS, JS, images, etc.)
 
 //session config 
 app.use(
