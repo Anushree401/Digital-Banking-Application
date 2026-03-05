@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
-    <title>Loan Applications</title>
+    <title>KYC Verification</title>
 </head>
 <body>
     <nav class="sidebar">
         <div class="brand">SecureBank</div>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="applications.html" class="nav-link active">Loan Applications</a></li>
-            <li class="nav-item"><a href="kyc.html" class="nav-link">KYC Verification</a></li>
+            <li class="nav-item"><a href="applications.html" class="nav-link">Loan Applications</a></li>
+            <li class="nav-item"><a href="kyc.html" class="nav-link active">KYC Verification</a></li>
             <li class="nav-item"><a href="customer.html" class="nav-link">Customer Details</a></li>
         </ul>
     </nav>
 
     <main class="content">
         <header>
-            <h1>Loan Applications</h1>
+            <h1>KYC Verification</h1>
             <div class="user-profile">
                 <div style="text-align: right">
                     <div style="font-weight: bold">Sarah Johnson</div>
@@ -28,38 +29,32 @@
 
         <div class="card">
             <div class="table-header">
-                <h3>Pending Applications</h3>
-                <div>
-                    <button class="btn">Filter</button>
-                    <button class="btn">Export</button>
-                </div>
+                <h3>Pending Verifications</h3>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th>Loan ID</th>
-                        <th>Customer Name</th>
-                        <th>Loan Type</th>
-                        <th>Amount</th>
-                        <th>Applied Date</th>
+                        <th>Customer ID</th>
+                        <th>Name</th>
+                        <th>PAN Number</th>
+                        <th>Aadhaar Number</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>LN2025001</td>
-                        <td>Rajesh Kumar</td>
-                        <td>Personal Loan</td>
-                        <td>₹5,00,000</td>
-                        <td>Jan 18, 2025</td>
+                        <td>CUST-9921</td>
+                        <td>Amit Patel</td>
+                        <td>ABCDE1234F</td>
+                        <td>xxxx-xxxx-9012</td>
                         <td><span class="badge">Pending</span></td>
                         <td>
-                            <button class="btn btn-approve">Approve</button>
+                            <button class="btn btn-approve">Verify</button>
                             <button class="btn btn-reject">Reject</button>
                         </td>
                     </tr>
-                    </tbody>
+                </tbody>
             </table>
         </div>
     </main>
