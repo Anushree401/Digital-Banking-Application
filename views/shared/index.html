@@ -21,7 +21,7 @@
 <nav class="nav-links">
 <a href="#">About</a>
 <a href="#">Offers</a>
-<a href="#">Services</a>
+<a href="#services">Services</a>
 </nav>
 
 <div class="nav-actions">
@@ -59,7 +59,7 @@ and personalized financial services.
 
 
 
-<section class="services">
+<section class="services" id="services">
 <div class="container">
 
 <h2>Our Services</h2>
@@ -155,10 +155,14 @@ entries.forEach(entry => {
 
 if(entry.isIntersecting){
 entry.target.classList.add("show");
+} else {
+entry.target.classList.remove("show"); // 👈 THIS is the fix
 }
 
 });
 
+}, {
+threshold: 0.2 // triggers when 20% visible (feels nicer)
 });
 
 cards.forEach(card => {
