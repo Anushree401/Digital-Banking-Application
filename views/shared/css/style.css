@@ -336,7 +336,12 @@ html {
 /* Left Side */
 .login-brand {
   flex:1;
-  background:linear-gradient(135deg,#153c3a,#1d5c57,#2f8f82);
+  background:linear-gradient(
+  135deg,
+  var(--primary),
+  var(--accent) 60%,
+  var(--secondary)
+);
   color:#bfffe7;
 
   display:flex;
