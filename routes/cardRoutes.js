@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { Card, AccountHolder, Customer } = require('../database/models');
+const { authorize } = require('../middleware/roleMiddleware');
 
 router.get('/', async (req, res) => {
   try {
@@ -65,7 +66,7 @@ router.post('/apply', async (req, res) => {
       card_number: cardNumber,
       card_type: cardType,
       expiry_date: expiry,
-      status: 'active',
+      status: 'pending',
       cvv_hash: cvvHash 
     });
 
@@ -73,6 +74,60 @@ router.post('/apply', async (req, res) => {
 
   } catch (err) {
     console.error("CARD APPLY ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/approve/:id', authorize('loan_officer'), async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'loan_officer') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const card = await Card.findByPk(req.params.id);
+
+    if (!card) return res.status(404).json({ error: 'Card not found' });
+
+    card.status = 'active';
+    await card.save();
+
+    res.json({ message: 'Card approved' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/reject/:id', authorize('loan_officer'), async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'loan_officer') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    const card = await Card.findByPk(req.params.id);
+
+    if (!card) return res.status(404).json({ error: 'Card not found' });
+
+    card.status = 'rejected';
+    await card.save();
+
+    res.json({ message: 'Card rejected' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/pending', authorize('loan_officer'), async (req, res) => {
+  try {
+    if (!req.session.user || req.session.user.role !== 'loan_officer') {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const cards = await Card.findAll({
+      where: { status: 'pending' }
+    });
+
+    res.json(cards);
+  } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });

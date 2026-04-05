@@ -51,6 +51,13 @@ function displayCards(cards) {
         ? '**** **** **** ' + card.card_number.slice(-4)
         : '**** **** **** ****';
 
+        const status = card.status || 'unknown';
+
+        let statusColor = '';
+        if (status === 'active') statusColor = 'green';
+        else if (status === 'pending') statusColor = 'orange';
+        else if (status === 'blocked') statusColor = 'red';
+
         cardDiv.innerHTML = `
             <p>${card.card_type || 'Card'}</p>
             <p class="card-number">${number}</p>
@@ -58,7 +65,9 @@ function displayCards(cards) {
             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
                 <div>
                     <p style="font-size: 12px; opacity: 0.8;">Status</p>
-                    <p class="card-holder">${card.status}</p>
+                    <p class="card-holder" style="color: ${statusColor}; font-weight: bold;">
+                        ${status.toUpperCase()}
+                    </p>
                 </div>
                 <div>
                     <p style="font-size: 12px; opacity: 0.8;">Expires</p>

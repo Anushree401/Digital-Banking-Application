@@ -79,6 +79,9 @@ app.use('/api/fds', require('./routes/fdRoutes'));
 app.use('/api/investments', require('./routes/investmentRoutes'));
 app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.get('/loan-officer/cards', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'cards.html'));
+});
 
 // start server after db connect
 sequelize.authenticate()
