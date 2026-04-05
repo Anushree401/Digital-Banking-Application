@@ -1,0 +1,14 @@
+const express = require('express');
+const router = express.Router();
+const { Investor } = require('../database/models');
+
+router.get('/', async (req, res) => {
+  try {
+    const investments = await Investor.findAll();
+    res.json(investments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;

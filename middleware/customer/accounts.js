@@ -13,21 +13,47 @@ function loadAccountsData() {
     displayAccounts(mockAccounts);
 }
 
-function displayAccounts(accounts) {
-    const accountsList = document.getElementById('accountsList');
-    accountsList.innerHTML = '';
+document.addEventListener('DOMContentLoaded', loadAccounts);
 
-    accounts.forEach(account => {
-        const accountItem = document.createElement('div');
-        accountItem.className = 'account-item';
-        accountItem.innerHTML = `
+async function loadAccounts() {
+    try {
+        const res = await fetch('/api/accounts', {
+            credentials: 'include'
+        });
+
+        const accounts = await res.json();
+
+        if (!res.ok) {
+            alert(accounts.error);
+            return;
+        }
+
+        displayAccounts(accounts);
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+function displayAccounts(accounts) {
+    const container = document.getElementById('accountsList');
+    container.innerHTML = '';
+
+    accounts.forEach(acc => {
+        const div = document.createElement('div');
+        div.className = 'account-item';
+
+        div.innerHTML = `
             <div class="account-info">
-                <h4>${account.name}</h4>
-                <p class="account-number">${account.number} | ${account.type} | ${account.status}</p>
+                <h4>${acc.acc_type.toUpperCase()} Account</h4>
+                <p>${acc.acc_no}</p>
             </div>
-            <div class="account-balance">$${account.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
+            <div class="account-balance">
+                ₹${parseFloat(acc.balance).toLocaleString()}
+            </div>
         `;
-        accountsList.appendChild(accountItem);
+
+        container.appendChild(div);
     });
 }
 

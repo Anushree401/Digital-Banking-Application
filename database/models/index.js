@@ -33,6 +33,48 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+const { Account, AccountHolder, Customer, Transaction } = db;
+
+// AccountHolder ↔ Account
+AccountHolder.belongsTo(Account, {
+  foreignKey: 'account_id'
+});
+
+Account.hasMany(AccountHolder, {
+  foreignKey: 'account_id'
+});
+
+// AccountHolder ↔ Customer
+AccountHolder.belongsTo(Customer, {
+  foreignKey: 'customer_id'
+});
+
+Customer.hasMany(AccountHolder, {
+  foreignKey: 'customer_id'
+});
+
+// FROM account
+// Transaction.belongsTo(Account, {
+//   foreignKey: 'from_account_id',
+//   as: 'fromAccount'
+// });
+
+// // TO account
+// Transaction.belongsTo(Account, {
+//   foreignKey: 'to_account_id',
+//   as: 'toAccount'
+// });
+
+Account.hasMany(Transaction, {
+  foreignKey: 'from_account_id',
+  as: 'sentTransactions'
+});
+
+Account.hasMany(Transaction, {
+  foreignKey: 'to_account_id',
+  as: 'receivedTransactions'
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

@@ -12,9 +12,10 @@ exports.loginUser = async (req,res) => {
     try {
         const user = await authService.login(email,password);
         req.session.user = {
-            id: user.user_id,
+            id: user.id,
             role: user.role
         };
+        console.log("LOGIN SESSION:", req.session);
         if (user.role === 'customer') {
             res.redirect('/customer/dashboard');
         }

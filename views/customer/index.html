@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Dashboard - Digital Banking</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/responsive.css">
 </head>
 <body>
     <header class="header">
@@ -102,12 +102,21 @@
                     <button class="action-btn" id="applyLoanBtn">Apply for Loan</button>
                 </div>
             </section>
+            <section class="transfer-section">
+                <h3>Transfer Money</h3>
+                <div class="transfer-box">
+                    <input type="text" id="fromAccount" placeholder="From Account No">
+                    <input type="text" id="toAccount" placeholder="To Account No">
+                    <input type="number" id="amount" placeholder="Amount">
+                    <button id="transferSubmit">Send Money</button>
+                </div>
+            </section>
         </div>
     </main>
     <footer class="footer">
         <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
     </footer>
-    <script src="../../middleware/shared/main.js"></script>
-    <script src="../../middleware/customer/dashboard.js"></script>
+    <script src="/js/shared/main.js"></script>
+    <script src="/js/customer/dashboard.js"></script>
 </body>
 </html>

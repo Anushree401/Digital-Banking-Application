@@ -3,46 +3,72 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-function loadCardsData() {
-    const mockCards = [
-        { id: 1, number: '4532 **** **** 7281', type: 'Visa Signature', holder: 'SARAH CHEN', expiry: '11/27', status: 'Active', limit: 15000, used: 4200 },
-        { id: 2, number: '5425 **** **** 8364', type: 'Mastercard', holder: 'SARAH CHEN', expiry: '09/28', status: 'Active', limit: 8000, used: 1850 }
-    ];
+async function loadCardsData() {
+    try {
+        const res = await fetch('/api/cards', {
+            credentials: 'include'
+        });
 
-    displayCards(mockCards);
+        const data = await res.json();
+        // const text = await res.text();
+        // console.log("RAW RESPONSE:", text);
+
+        // let data;
+        // try {
+        //     data = JSON.parse(text);
+        // } catch (e) {
+        //     console.error("NOT JSON RESPONSE");
+        //     return;
+        // }
+
+        if (!res.ok) {
+            alert(data.error);
+            return;
+        }
+
+        displayCards(data);
+
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 function displayCards(cards) {
+
     const cardsList = document.getElementById('cardsList');
     cardsList.innerHTML = '';
+
+    if (!cards.length) {
+        cardsList.innerHTML = '<p>No active cards found</p>';
+        return;
+    }
 
     cards.forEach(card => {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card-visual';
-        const available = card.limit - card.used;
-        const usagePercent = (card.used / card.limit * 100).toFixed(1);
-        
+
+        const number = card.card_number
+        ? '**** **** **** ' + card.card_number.slice(-4)
+        : '**** **** **** ****';
+
         cardDiv.innerHTML = `
-            <p>${card.type}</p>
-            <p class="card-number">${card.number}</p>
+            <p>${card.card_type || 'Card'}</p>
+            <p class="card-number">${number}</p>
+
             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
                 <div>
-                    <p style="font-size: 12px; opacity: 0.8;">Card Holder</p>
-                    <p class="card-holder">${card.holder}</p>
+                    <p style="font-size: 12px; opacity: 0.8;">Status</p>
+                    <p class="card-holder">${card.status}</p>
                 </div>
                 <div>
                     <p style="font-size: 12px; opacity: 0.8;">Expires</p>
-                    <p class="card-holder">${card.expiry}</p>
-                </div>
-            </div>
-            <div style="margin-top: 20px;">
-                <p style="font-size: 12px; opacity: 0.8;">Available Credit</p>
-                <p style="font-size: 20px; font-weight: 600;">$${available.toLocaleString('en-US', {minimumFractionDigits: 2})} / $${card.limit.toLocaleString('en-US', {minimumFractionDigits: 2})}</p>
-                <div class="progress-bar" style="background: rgba(255,255,255,0.3);">
-                    <div class="progress-fill" style="width: ${usagePercent}%; background: white;"></div>
+                    <p class="card-holder">
+                        ${new Date(card.expiry_date).toLocaleDateString()}
+                    </p>
                 </div>
             </div>
         `;
+
         cardsList.appendChild(cardDiv);
     });
 }
@@ -69,9 +95,56 @@ function setupEventListeners() {
         window.location.href = '../shared/login.html';
     });
 
-    document.getElementById('applyCardBtn').addEventListener('click', function() {
-        alert('Apply for New Card functionality will be implemented');
-    });
+    const applyBtn = document.getElementById('applyCardBtn');
+    if (form) {
+        const formSection = form.parentElement;
+        formSection.style.display = 'none';
+
+        applyBtn.addEventListener('click', () => {
+            formSection.style.display =
+                formSection.style.display === 'none' ? 'block' : 'none';
+        });
+    }
+
+    const form = document.getElementById('applyCardForm');
+
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const cardType = document.getElementById('cardType').value;
+            const accountId = document.getElementById('accountId').value;
+
+            try {
+                const res = await fetch('/api/cards/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        cardType,
+                        accountId
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert(data.error);
+                    return;
+                }
+
+                alert("Card applied successfully!");
+
+                form.reset();        // clear form
+                loadCardsData();     // refresh cards
+
+            } catch (err) {
+                console.error(err);
+            }
+        });
+    }
 
     document.getElementById('blockCardBtn').addEventListener('click', function() {
         alert('Block Card functionality will be implemented');

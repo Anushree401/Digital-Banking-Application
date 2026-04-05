@@ -11,36 +11,39 @@ function displayCurrentDate() {
     dateElement.textContent = today.toLocaleDateString('en-US', options);
 }
 
-function loadDashboardData() {
-    const mockData = {
-        userName: 'Sarah Chen',
-        totalBalance: 38420.50,
-        monthlyIncome: 6200.00,
-        monthlyExpenses: 2150.75,
-        activeLoans: 1,
-        accounts: [
-            { id: 1, name: 'Primary Checking', number: '****7392', balance: 18420.50 },
-            { id: 2, name: 'Emergency Fund', number: '****5801', balance: 15000.00 },
-            { id: 3, name: 'Travel Reserve', number: '****2647', balance: 5000.00 }
-        ],
-        transactions: [
-            { date: '2026-03-03', description: 'Employer Direct Deposit', type: 'Credit', amount: 6200.00 },
-            { date: '2026-03-02', description: 'Whole Foods Market', type: 'Debit', amount: -87.32 },
-            { date: '2026-03-01', description: 'Internet Provider - Monthly', type: 'Debit', amount: -79.99 },
-            { date: '2026-02-28', description: 'ATM Withdrawal - Chase', type: 'Debit', amount: -100.00 },
-            { date: '2026-02-27', description: 'Freelance Project Payment', type: 'Credit', amount: 750.00 }
-        ]
-    };
+async function loadDashboardData() {
+    try {
+        const res = await fetch('/api/dashboard', {credentials: 'include'});
+        const data = await res.json();
 
-    document.getElementById('welcomeName').textContent = mockData.userName.split(' ')[0];
-    document.getElementById('userName').textContent = mockData.userName;
-    document.getElementById('totalBalance').textContent = `$${mockData.totalBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-    document.getElementById('monthlyIncome').textContent = `$${mockData.monthlyIncome.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-    document.getElementById('monthlyExpenses').textContent = `$${mockData.monthlyExpenses.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-    document.getElementById('activeLoans').textContent = mockData.activeLoans;
+        document.getElementById('welcomeName').textContent = 'User';
+        document.getElementById('userName').textContent = 'User';
 
-    displayAccounts(mockData.accounts);
-    displayTransactions(mockData.transactions);
+        document.getElementById('totalBalance').textContent =
+            `$${data.totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+        document.getElementById('monthlyIncome').textContent =
+            `$${data.monthlyIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+        document.getElementById('monthlyExpenses').textContent =
+            `$${data.monthlyExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+
+        document.getElementById('activeLoans').textContent = data.activeLoans;
+
+        displayTransactions(
+            data.transactions.map(tx => ({
+                date: new Date(tx.timestamp).toLocaleDateString(),
+                description: tx.description,
+                type: tx.transaction_type,
+                amount: tx.amount
+            }))
+        );
+
+        // displayAccounts(data.accounts);
+
+    } catch (err) {
+        console.error('Dashboard error:', err);
+    }
 }
 
 function displayAccounts(accounts) {
@@ -104,7 +107,9 @@ function setupEventListeners() {
     });
 
     document.getElementById('transferBtn').addEventListener('click', function() {
-        alert('Transfer Money functionality will be implemented');
+        document.querySelector('.transfer-section').scrollIntoView({
+            behavior: 'smooth'
+        });
     });
 
     document.getElementById('payBillBtn').addEventListener('click', function() {
@@ -119,3 +124,44 @@ function setupEventListeners() {
         window.location.href = 'loans.html';
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const transferBtn = document.getElementById('transferSubmit');
+
+    if (transferBtn) {
+        transferBtn.addEventListener('click', async () => {
+
+            const fromAccount = document.getElementById('fromAccount').value;
+            const toAccount = document.getElementById('toAccount').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            if (!fromAccount || !toAccount || !amount) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/transactions/transfer', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fromAccount, toAccount, amount })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert('Transfer successful');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert('Something went wrong');
+            }
+
+        });
+    }
+});
