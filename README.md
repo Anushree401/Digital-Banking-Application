@@ -209,3 +209,37 @@ This project is designed for:
 * Credit score integration
 * Fraud detection simulation
 * Advanced analytics dashboard
+
+--
+
+# HOW TO RUN THIS PROJECT
+
+```bash
+1. npm install
+2. <create .env>
+	DATABASE_URL=
+	DEV_DATABASE_URL=
+	TEST_DATABASE_URL=
+	SECRET_KEY_APP=
+	JWT_SECRET_KEY=
+	PORT=
+3. <use pgadmin to make db in ur local db>
+4. <make sure this is there in database/config/config.js>
+	require('dotenv').config()
+	module.exports = {
+	  development: {
+		url: process.env.DEV_DATABASE_URL,
+		dialect: 'postgres',
+	  },
+	  test: {
+		url: process.env.TEST_DATABASE_URL,
+		dialect: 'postgres',
+	  },
+	  production: {
+		url: process.env.DATABASE_URL,
+		dialect: 'postgres',
+	  },
+	}
+5. npx sequelize db.migrate 
+6. npm start OR node server.js
+```
