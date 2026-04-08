@@ -1,13 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Loan Applications</title>
+    <title>Card Applications - BrokeBank</title>
 </head>
 <body>
-    <h2>Pending Card Applications</h2>
-    <div id="pendingCards"></div>
+    <nav class="sidebar">
+        <div class="brand">BrokeBank Officer</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link">Dashboard</a></li>
+            <li class="nav-item"><a href="applications.html" class="nav-link">Loan Applications</a></li>
+            <li class="nav-item"><a href="kyc.html" class="nav-link">KYC Verification</a></li>
+            <li class="nav-item"><a href="customer.html" class="nav-link">Customer Details</a></li>
+            <li class="nav-item"><a href="cards.html" class="nav-link active">Card Requests</a></li>
+        </ul>
+    </nav>
 
-    <script src="/js/loan-officer/cards.js"></script>
+    <main class="content">
+        <header>
+            <h1>Card Applications</h1>
+            <div class="user-profile">
+                <div class="officer-meta">
+                    <div class="officer-name">Sarah Johnson</div>
+                    <div class="officer-role">Loan Officer</div>
+                </div>
+                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson" alt="Profile">
+            </div>
+        </header>
+
+        <section class="card">
+            <div class="table-header">
+                <h3>Pending Card Applications</h3>
+            </div>
+            <div id="pendingCards" class="table-wrap"></div>
+        </section>
+    </main>
+
+    <script src="../../middleware/loan-officer/cards.js"></script>
 </body>
 </html>

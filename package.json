@@ -1,6 +1,9 @@
 {
   "scripts": {
-    "start": "http-server -p 8000 -o /views/customer/index.html"
+    "start": "http-server -p 8000 -o index.html",
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:init": "npx sequelize-cli db:migrate && node seed.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

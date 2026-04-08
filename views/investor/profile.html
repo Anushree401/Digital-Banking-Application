@@ -4,19 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - Investor Dashboard</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/responsive.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <header>
-    </header>
-    <nav>
-    </nav>
-    <main>
-    </main>
-    <footer>
-    </footer>
-    <script src="/js/shared/main.js"></script>
+    <div class="portal-shell">
+        <aside class="sidebar">
+            <div class="brand">BrokeBank Investor</div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="index.html">Dashboard</a></li>
+                <li class="nav-item"><a href="investments.html">Investments</a></li>
+                <li class="nav-item"><a href="offers.html">Offers</a></li>
+                <li class="nav-item"><a href="portfolio.html">Portfolio</a></li>
+                <li class="nav-item active"><a href="profile.html">Profile</a></li>
+                <li class="nav-item"><a href="support.html">Support</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <section class="topbar">
+                <h1>Profile</h1>
+                <span class="role-chip">INVESTOR</span>
+            </section>
+
+            <section class="panel">
+                <h2>Account Details</h2>
+                <div class="list">
+                    <div class="list-item"><span>Name</span><strong id="profileName">--</strong></div>
+                    <div class="list-item"><span>Email</span><strong id="profileEmail">--</strong></div>
+                    <div class="list-item"><span>Risk Preference</span><strong id="profileRisk">--</strong></div>
+                    <div class="list-item"><span>KYC</span><span class="badge badge-live" id="profileKyc">--</span></div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/investor/profile.js"></script>
 </body>
 </html>

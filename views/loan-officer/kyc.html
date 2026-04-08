@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>KYC Verification</title>
+    <title>KYC Verification - BrokeBank</title>
 </head>
 <body>
     <nav class="sidebar">
@@ -19,15 +20,15 @@
         <header>
             <h1>KYC Verification</h1>
             <div class="user-profile">
-                <div style="text-align: right">
-                    <div style="font-weight: bold">Sarah Johnson</div>
-                    <div style="font-size: 12px; color: gray">Loan Officer</div>
+                <div class="officer-meta">
+                    <div class="officer-name">Sarah Johnson</div>
+                    <div class="officer-role">Loan Officer</div>
                 </div>
                 <img src="https://ui-avatars.com/api/?name=Sarah+Johnson" alt="Profile">
             </div>
         </header>
 
-        <div class="card">
+        <div class="card table-wrap">
             <div class="table-header">
                 <h3>Pending Verifications</h3>
             </div>
@@ -42,21 +43,10 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>CUST-9921</td>
-                        <td>Amit Patel</td>
-                        <td>ABCDE1234F</td>
-                        <td>xxxx-xxxx-9012</td>
-                        <td><span class="badge">Pending</span></td>
-                        <td>
-                            <button class="btn btn-approve">Verify</button>
-                            <button class="btn btn-reject">Reject</button>
-                        </td>
-                    </tr>
-                </tbody>
+                <tbody id="kycBody"></tbody>
             </table>
         </div>
     </main>
+    <script src="../../middleware/loan-officer/kyc.js"></script>
 </body>
 </html>

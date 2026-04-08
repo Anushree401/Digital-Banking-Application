@@ -3,20 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investor Dashboard - Digital Banking</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/responsive.css">
+    <title>Investor Dashboard - BrokeBank</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <header>
-    </header>
-    <nav>
-    </nav>
-    <main>
-    </main>
-    <footer>
-    </footer>
-    <script src="/js/shared/main.js"></script>
+    <div class="portal-shell">
+        <aside class="sidebar">
+            <div class="brand">BrokeBank Investor</div>
+            <ul class="nav-menu">
+                <li class="nav-item active"><a href="index.html">Dashboard</a></li>
+                <li class="nav-item"><a href="investments.html">Investments</a></li>
+                <li class="nav-item"><a href="offers.html">Offers</a></li>
+                <li class="nav-item"><a href="portfolio.html">Portfolio</a></li>
+                <li class="nav-item"><a href="profile.html">Profile</a></li>
+                <li class="nav-item"><a href="support.html">Support</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <section class="topbar">
+                <h1>Investor Command Center</h1>
+                <span class="role-chip">INVESTOR</span>
+            </section>
+
+            <section class="stats">
+                <article class="stat-card"><h3>Total Deployed</h3><p class="stat-value" id="invTotalDeployed">--</p></article>
+                <article class="stat-card"><h3>Active Deals</h3><p class="stat-value" id="invActiveDeals">--</p></article>
+                <article class="stat-card"><h3>Expected Yield</h3><p class="stat-value" id="invExpectedYield">--</p></article>
+                <article class="stat-card"><h3>This Month Payout</h3><p class="stat-value" id="invMonthPayout">--</p></article>
+            </section>
+
+            <section class="grid-2">
+                <article class="panel">
+                    <h2>Top Live Offers</h2>
+                    <div class="list" id="invLiveOffers"></div>
+                </article>
+
+                <article class="panel">
+                    <h2>Portfolio Snapshot</h2>
+                    <div class="list" id="invRiskSplit"></div>
+                </article>
+            </section>
+        </main>
+    </div>
+    <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/investor/dashboard.js"></script>
 </body>
 </html>

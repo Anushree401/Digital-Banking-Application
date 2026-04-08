@@ -209,3 +209,33 @@ This project is designed for:
 * Credit score integration
 * Fraud detection simulation
 * Advanced analytics dashboard
+
+---
+
+## Local Database Setup
+
+This project uses Sequelize with PostgreSQL.
+
+Set your local database values in `.env` using either a full URL or the explicit fields below:
+
+* `DEV_DATABASE_URL=postgres://postgres:yourpassword@localhost:5432/banking_app`
+* or `DEV_DB_NAME=banking_app`
+* or `DEV_DB_USER=postgres`
+* or `DEV_DB_PASSWORD=yourpassword`
+* or `DEV_DB_HOST=localhost`
+* or `DEV_DB_PORT=5432`
+
+Then run:
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
+
+Or do both in one step:
+
+```bash
+npm run db:init
+```
+
+If you want to reset and rerun everything, drop the database in pgAdmin first, recreate it, and run `npm run db:init` again.

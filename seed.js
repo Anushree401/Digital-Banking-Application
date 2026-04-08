@@ -17,7 +17,28 @@ const bcrypt = require('bcrypt');
 
 async function seed() {
   try {
-    await sequelize.sync({ force: true }); // wipes DB and recreates tables
+    await sequelize.authenticate();
+
+    const queryInterface = sequelize.getQueryInterface();
+
+    const tables = [
+      'Offers',
+      'Loans',
+      'Cards',
+      'Transactions',
+      'AccountHolders',
+      'FixedDeposits',
+      'Investors',
+      'LoanOfficers',
+      'BusinessProfiles',
+      'IndividualProfiles',
+      'Customers',
+      'Users'
+    ];
+
+    for (const table of tables) {
+      await queryInterface.bulkDelete(table, null, {});
+    }
 
     console.log("Seeding started...");
 

@@ -2,32 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Customer Details</title>
-    <style>
-        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .info-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .label { font-size: 12px; color: #666; display: block; }
-        .value { font-weight: 600; }
-    </style>
+    <title>Loan Officer Dashboard - BrokeBank</title>
 </head>
 <body>
     <nav class="sidebar">
-        <div class="brand">SecureBank</div>
+        <div class="brand">BrokeBank Officer</div>
         <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html" class="nav-link active">Dashboard</a></li>
             <li class="nav-item"><a href="applications.html" class="nav-link">Loan Applications</a></li>
             <li class="nav-item"><a href="kyc.html" class="nav-link">KYC Verification</a></li>
-            <li class="nav-item"><a href="customer.html" class="nav-link active">Customer Details</a></li>
+            <li class="nav-item"><a href="customer.html" class="nav-link">Customer Details</a></li>
+            <li class="nav-item"><a href="cards.html" class="nav-link">Card Requests</a></li>
         </ul>
     </nav>
 
     <main class="content">
         <header>
-            <h1>Customer Profile</h1>
+            <h1>Loan Officer Dashboard</h1>
             <div class="user-profile">
-                <div style="text-align: right">
-                    <div style="font-weight: bold">Sarah Johnson</div>
-                    <div style="font-size: 12px; color: gray">Loan Officer</div>
+                <div class="officer-meta">
+                    <div class="officer-name">Sarah Johnson</div>
+                    <div class="officer-role">Loan Officer</div>
                 </div>
                 <img src="https://ui-avatars.com/api/?name=Sarah+Johnson" alt="Profile">
             </div>
@@ -35,20 +32,21 @@
 
         <div class="details-grid">
             <div class="card">
-                <h3>Personal Information</h3><br>
-                <div class="info-item"><span class="label">Full Name</span><span class="value">Priya Sharma</span></div>
-                <div class="info-item"><span class="label">Email</span><span class="value">priya@email.com</span></div>
-                <div class="info-item"><span class="label">Phone</span><span class="value">+91 98765 43210</span></div>
-                <div class="info-item"><span class="label">KYC Status</span><span class="value" style="color: green;">Verified</span></div>
+                <h3>Pipeline Health</h3><br>
+                <div class="info-item"><span class="label">Pending Applications</span><span class="value" id="loPendingApplications">--</span></div>
+                <div class="info-item"><span class="label">KYC In Review</span><span class="value" id="loKycReview">--</span></div>
+                <div class="info-item"><span class="label">Approvals This Week</span><span class="value" id="loApprovalsWeek">--</span></div>
+                <div class="info-item"><span class="label">Portfolio Risk</span><span class="value value-success" id="loRiskState">--</span></div>
             </div>
             <div class="card">
-                <h3>Account Summary</h3><br>
-                <div class="info-item"><span class="label">Primary Account</span><span class="value">8877001122</span></div>
-                <div class="info-item"><span class="label">Current Balance</span><span class="value">₹1,24,000</span></div>
-                <div class="info-item"><span class="label">Active Loans</span><span class="value">1</span></div>
-                <div class="info-item"><span class="label">Risk Profile</span><span class="value">Low Risk</span></div>
+                <h3>Action Queue</h3><br>
+                <div class="info-item"><span class="label">Needs Decision Today</span><span class="value" id="loDecisionToday">--</span></div>
+                <div class="info-item"><span class="label">Card Cases Pending</span><span class="value" id="loCardPending">--</span></div>
+                <div class="info-item"><span class="label">Customer Escalations</span><span class="value" id="loEscalations">--</span></div>
+                <div class="info-item"><span class="label">SLA Adherence</span><span class="value" id="loSla">--</span></div>
             </div>
         </div>
     </main>
+    <script src="../../middleware/loan-officer/dashboard.js"></script>
 </body>
 </html>

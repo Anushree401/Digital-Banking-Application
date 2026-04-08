@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Register - BrokeBank</title>
 
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
 
 <style>
 
@@ -117,14 +117,13 @@ transform:translateY(-1px);
 <div class="register-container">
 
 <div class="register-header">
-<h1>Customer Registration</h1>
-<p>Fill in your details to create an account</p>
+<h1 id="registerTitle">Customer Registration</h1>
+<p id="registerDesc">Fill in your details to create an account</p>
 </div>
 
 <form action="/auth/register" method="POST">
 
-
-<input type="hidden" name="role" value="customer">
+<input type="hidden" id="roleInput" name="role" value="customer">
 
 
 <div class="section-title">Personal Information</div>
@@ -211,9 +210,27 @@ Create Account
 </main>
 
 <footer></footer>
-
-<script src="../middleware/shared/main.js"></script>
-<script src="../middleware/shared/auth.js"></script>
+<script>
+// Handle role parameter from URL
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get('role');
+    
+    const roleMapping = {
+        'customer': { title: 'Customer Registration', desc: 'Fill in your details to create an account' },
+        'officer': { title: 'Loan Officer Registration', desc: 'Complete your registration as a loan officer' },
+        'investor': { title: 'Investor Registration', desc: 'Register as an investor' }
+    };
+    
+    if (role && roleMapping[role]) {
+        document.getElementById('roleInput').value = role;
+        document.getElementById('registerTitle').textContent = roleMapping[role].title;
+        document.getElementById('registerDesc').textContent = roleMapping[role].desc;
+    }
+});
+</script>
+<script src="../../middleware/shared/main.js"></script>
+<script src="../../middleware/shared/auth.js"></script>
 
 </body>
 </html>

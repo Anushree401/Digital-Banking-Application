@@ -4,170 +4,335 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BrokeBank</title>
-<link rel="stylesheet" href="/css/style.css">
-<link rel="stylesheet" href="/css/responsive.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
 </head>
 
-<body>
+<body class="landing-page">
 
 <header class="navbar">
 <div class="container nav-inner">
 
-<div class="logo">
-    <img src="assets/brokebank_logo.svg" alt="BrokeBank logo">
-    <span>BrokeBank</span>
-</div>
+<a class="logo" href="#top" aria-label="BrokeBank home">
+<img src="assets/brokebank_logo.svg" alt="BrokeBank logo">
+<span>BrokeBank</span>
+</a>
 
-<nav class="nav-links">
-<a href="#">About</a>
-<a href="#">Offers</a>
+<nav class="nav-links" aria-label="Primary navigation">
+<a href="#story">Story</a>
 <a href="#services">Services</a>
+<a href="#momentum">Momentum</a>
+<a href="#security">Security</a>
 </nav>
 
 <div class="nav-actions">
-<!-- <button class="login">Login</button>
-<button class="register">Register</button> -->
-<a href="/auth/login" class="login">Login</a>
-<a href="/auth/register" class="register">Register</a>
+<a href="login.html" class="login">Login</a>
+<a href="regi_choice.html" class="register">Register</a>
 </div>
 
 </div>
 </header>
 
+<main id="top">
+<section class="hero-story" id="story">
+<div class="hero-ambient" aria-hidden="true"></div>
+<div class="hero-grid-pattern" aria-hidden="true"></div>
+<div class="hero-noise-grid" id="heroNoiseGrid" aria-hidden="true">
+<div class="strip-field" id="stripField"></div>
+<div class="noise-layer"></div>
+</div>
 
-<section class="hero-wrapper">
-
-<div class="hero-bg"></div>
-
-<div class="hero-card">
-
-<h1>Secure Digital Banking Platform</h1>
-
-<p>
-Experience modern banking with advanced security, instant transfers,
-and personalized financial services.
+<div class="hero-sticky container">
+<div class="hero-copy reveal">
+<p class="eyebrow">BROKEBANK</p>
+<h1>
+Banking for all.
+</h1>
+<p class="hero-subcopy">
+Save, spend, borrow, and grow in one clear app.
 </p>
-
 <div class="hero-buttons">
-<a href="/auth/register" class="primary">Open Account →</a>
-<a href="/auth/login" class="secondary">Login</a>
+<a href="regi_choice.html" class="primary">Open Account</a>
+<a href="login.html" class="secondary">Login</a>
+</div>
 </div>
 
+<div class="hero-card-stage" aria-hidden="true">
+<div class="hero-card-stack" id="heroCardStack">
+<article class="hero-3d-card card-a">
+<div class="cc-top-row">
+<p class="card-label">Spend</p>
+<span class="cc-chip"></span>
 </div>
-
+<h3>Live balance</h3>
+<p class="cc-number">4521 9032 1159 4408</p>
+<p>See every move instantly.</p>
+</article>
+<article class="hero-3d-card card-b">
+<div class="cc-top-row">
+<p class="card-label">Borrow</p>
+<span class="cc-chip"></span>
+</div>
+<h3>Quick loans</h3>
+<p class="cc-number">7991 2240 0872 6643</p>
+<p>Fast checks. Clear terms.</p>
+</article>
+<article class="hero-3d-card card-c">
+<div class="cc-top-row">
+<p class="card-label">Grow</p>
+<span class="cc-chip"></span>
+</div>
+<h3>Smart growth</h3>
+<p class="cc-number">6217 5580 9941 3005</p>
+<p>Deposits and investing, simplified.</p>
+</article>
+</div>
+<p class="scroll-hint">Scroll to open the stack</p>
+</div>
+</div>
 </section>
-
 
 <section class="services" id="services">
 <div class="container">
-
-<h2>Our Services</h2>
-<p class="subtitle">Comprehensive banking solutions tailored to your needs</p>
+<div class="section-head reveal">
+<p class="eyebrow">PRODUCT</p>
+<h2>One app for every money move.</h2>
+</div>
 
 <div class="services-grid">
-
-<div class="card">
+<article class="card reveal">
 <h3>Savings Accounts</h3>
-<p>High interest rates with flexible withdrawal options</p>
-<a href="#">Learn more →</a>
-</div>
+<p>Save by goals. Withdraw anytime.</p>
+<a href="#">Explore savings</a>
+</article>
 
-<div class="card">
-<h3>Personal Loans</h3>
-<p>Quick approval with competitive interest rates</p>
-<a href="#">Learn more →</a>
-</div>
+<article class="card reveal">
+<h3>Loans</h3>
+<p>Apply fast. Track every step.</p>
+<a href="#">Explore loans</a>
+</article>
 
-<div class="card">
+<article class="card reveal">
+<h3>Cards</h3>
+<p>Set limits and freeze in seconds.</p>
+<a href="#">Explore cards</a>
+</article>
+
+<article class="card reveal">
 <h3>Fixed Deposits</h3>
-<p>Guaranteed returns with flexible tenures</p>
-<a href="#">Learn more →</a>
-</div>
+<p>Lock funds. Earn stable returns.</p>
+<a href="#">Explore deposits</a>
+</article>
 
-<div class="card">
-<h3>Credit Cards</h3>
-<p>Exclusive rewards and cashback offers</p>
-<a href="#">Learn more →</a>
-</div>
+<article class="card reveal">
+<h3>Investor Dashboard</h3>
+<p>Track offers, risk, and returns.</p>
+<a href="#">Explore investing</a>
+</article>
 
-<div class="card">
-<h3>Investment</h3>
-<p>Diversified portfolio management</p>
-<a href="#">Learn more →</a>
-</div>
-
-<div class="card">
-<h3>Insurance</h3>
-<p>Comprehensive protection plans</p>
-<a href="#">Learn more →</a>
-</div>
-
+<article class="card reveal">
+<h3>Support Layer</h3>
+<p>Get quick, context-aware help.</p>
+<a href="#">Explore support</a>
+</article>
 </div>
 </div>
 </section>
 
+<section class="momentum" id="momentum">
+<div class="container momentum-grid">
+<div class="momentum-copy reveal">
+<p class="eyebrow">WHY BROKEBANK</p>
+<h2>Premium feel. Zero gatekeeping.</h2>
+<p>
+Clean flows. Clear control.
+</p>
+</div>
+<div class="stat-strip reveal">
+<div class="stat-item">
+<p class="stat-value">24x7</p>
+<p class="stat-label">transaction rail</p>
+</div>
+<div class="stat-item">
+<p class="stat-value">3 roles</p>
+<p class="stat-label">customer, investor, officer</p>
+</div>
+<div class="stat-item">
+<p class="stat-value">1 feed</p>
+<p class="stat-label">single source of truth</p>
+</div>
+</div>
+</div>
 
+<div class="ticker-wrap" aria-hidden="true">
+<div class="ticker-track">
+<span>INSTANT TRANSFERS</span>
+<span>SECURE SESSION CONTROL</span>
+<span>DYNAMIC LOAN MANAGEMENT</span>
+<span>PORTFOLIO VISIBILITY</span>
+<span>ROLE-BASED EXPERIENCE</span>
+<span>INSTANT TRANSFERS</span>
+<span>SECURE SESSION CONTROL</span>
+<span>DYNAMIC LOAN MANAGEMENT</span>
+<span>PORTFOLIO VISIBILITY</span>
+<span>ROLE-BASED EXPERIENCE</span>
+</div>
+</div>
+</section>
+
+<section class="security" id="security">
+<div class="container security-shell reveal">
+<div>
+<p class="eyebrow">TRUST</p>
+<h2>Security that stays out of your way.</h2>
+<p>
+Strong guardrails for every transaction.
+</p>
+</div>
+<div class="shield-grid">
+<div class="shield-card">
+<h3>Session safety</h3>
+<p>Reliable server-side sessions.</p>
+</div>
+<div class="shield-card">
+<h3>Structured APIs</h3>
+<p>Clear boundaries across services.</p>
+</div>
+<div class="shield-card">
+<h3>Database rigor</h3>
+<p>Clean data models for scale.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
 
 <footer class="footer">
 <div class="container footer-grid">
-
 <div>
 <h3>BrokeBank</h3>
-<p>Your trusted digital banking partner</p>
+<p>Accessible digital banking for everyone.</p>
 </div>
-
+<div>
+<h4>Platform</h4>
+<p>Accounts</p>
+<p>Loans</p>
+<p>Investments</p>
+</div>
 <div>
 <h4>Company</h4>
-<p>About Us</p>
+<p>About</p>
+<p>Support</p>
 <p>Careers</p>
-<p>Press</p>
 </div>
-
-<div>
-<h4>Support</h4>
-<p>Help Center</p>
-<p>Contact</p>
-<p>Security</p>
-</div>
-
 <div>
 <h4>Legal</h4>
-<p>Privacy Policy</p>
-<p>Terms of Service</p>
-<p>Cookie Policy</p>
+<p>Privacy</p>
+<p>Terms</p>
+<p>Cookies</p>
 </div>
-
 </div>
-
-<p class="copyright">© 2026 BrokeBank. All rights reserved.</p>
-
+<p class="copyright">2026 BrokeBank. All rights reserved.</p>
 </footer>
-<!-- <script src="../middleware/shared/main.js"></script> -->
 
 <script>
+(function () {
+const revealNodes = document.querySelectorAll('.reveal');
+const cards = document.querySelectorAll('.hero-3d-card');
+const heroSection = document.querySelector('.hero-story');
+const stripField = document.getElementById('stripField');
+const noiseLayer = document.querySelector('.noise-layer');
 
-const cards = document.querySelectorAll(".card");
+const revealObserver = new IntersectionObserver(function (entries) {
+entries.forEach(function (entry) {
+if (entry.isIntersecting) {
+entry.target.classList.add('is-visible');
+revealObserver.unobserve(entry.target);
+}
+});
+}, { threshold: 0.2 });
 
-const observer = new IntersectionObserver(entries => {
+revealNodes.forEach(function (node) {
+revealObserver.observe(node);
+});
 
-entries.forEach(entry => {
-
-if(entry.isIntersecting){
-entry.target.classList.add("show");
-} else {
-entry.target.classList.remove("show"); // 👈 THIS is the fix
+function clamp(value, min, max) {
+return Math.min(max, Math.max(min, value));
 }
 
+function easeOutCubic(t) {
+return 1 - Math.pow(1 - t, 3);
+}
+
+function mix(from, to, progress) {
+return from + (to - from) * progress;
+}
+
+function renderNoiseStrips() {
+if (!stripField) {
+return;
+}
+
+const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+const stripCount = Math.ceil(viewportWidth / 80);
+
+stripField.innerHTML = '';
+for (let i = 0; i < stripCount; i += 1) {
+const strip = document.createElement('span');
+strip.className = 'noise-strip';
+strip.style.animationDelay = (i * 0.06) + 's';
+stripField.appendChild(strip);
+}
+}
+
+function updateHeroStack() {
+if (!heroSection || !cards.length) {
+return;
+}
+
+const rect = heroSection.getBoundingClientRect();
+const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+const total = Math.max(1, rect.height - windowHeight);
+const traveled = clamp(-rect.top, 0, total);
+const progress = clamp(traveled / total, 0, 1);
+const eased = easeOutCubic(progress);
+
+cards.forEach(function (card, index) {
+const segmentStart = index * 0.24;
+const segmentProgress = clamp((eased - segmentStart) / 0.56, 0, 1);
+const cardEase = easeOutCubic(segmentProgress);
+
+const startY = 360 + index * 28;
+const endY = -290 + index * 38;
+const y = mix(startY, endY, cardEase);
+const liftTilt = mix(3 - index * 0.5, 0, cardEase);
+const cardOpacity = mix(0.2, 1, cardEase);
+
+card.style.transform =
+'translate3d(-50%,' + y + 'px,0px) rotateX(' + liftTilt + 'deg)';
+card.style.opacity = String(cardOpacity);
+card.style.zIndex = String(10 - index);
 });
 
-}, {
-threshold: 0.2 // triggers when 20% visible (feels nicer)
-});
+if (stripField) {
+const stripY = mix(0, -130, eased);
+const stripX = mix(0, -26, eased);
+stripField.style.transform = 'translate3d(' + stripX + 'px,' + stripY + 'px,0px)';
+}
 
-cards.forEach(card => {
-observer.observe(card);
-});
+if (noiseLayer) {
+const noiseY = mix(0, -82, eased);
+const noiseX = mix(0, -18, eased);
+noiseLayer.style.transform = 'scale(1.2) translate3d(' + noiseX + 'px,' + noiseY + 'px,0px)';
+}
+}
 
+renderNoiseStrips();
+updateHeroStack();
+window.addEventListener('resize', renderNoiseStrips);
+window.addEventListener('scroll', updateHeroStack, { passive: true });
+window.addEventListener('resize', updateHeroStack);
+})();
 </script>
 
 </body>

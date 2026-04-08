@@ -2,7 +2,8 @@ const authService = require('../services/authService');
 const path = require('path');
 
 exports.showLogin = (req,res) => {
-    res.sendFile(path.join(__dirname, '../views/shared/login.html'));
+    const query = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+    res.redirect('/shared/login.html' + query);
 };
 
 exports.loginUser = async (req,res) => {
@@ -37,7 +38,8 @@ exports.loginUser = async (req,res) => {
 };
 
 exports.showRegister = (req,res) => {
-    res.sendFile(path.join(__dirname, '../views/shared/register.html'));
+    const query = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+    res.redirect('/shared/register.html' + query);
 };
 
 exports.registerUser = async (req,res) => {

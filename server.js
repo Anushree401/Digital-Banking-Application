@@ -32,8 +32,22 @@ app.use(
     express.static(path.join(__dirname, 'middleware'))
 ); // serve static files from the public directory (for CSS, JS, images, etc.)
 app.use(
+  '/middleware',
+  express.static(path.join(__dirname, 'middleware'))
+);
+app.use(
     '/customer', 
     express.static(path.join(__dirname, 'views', 'customer'))
+);
+
+app.use(
+    '/investor', 
+    express.static(path.join(__dirname, 'views', 'investor'))
+);
+
+app.use(
+    '/loan-officer', 
+    express.static(path.join(__dirname, 'views', 'loan-officer'))
 );
 
 //session config 
@@ -57,7 +71,7 @@ app.use('/debug', require('./routes/debugRoutes'));
 
 // serve HTML files
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'shared', 'index.html'));
+  res.redirect('/shared/index.html');
 });
 
 // auth routes
@@ -71,6 +85,25 @@ app.get('/customer/dashboard', (req, res) => {
 
   res.sendFile(path.join(__dirname, 'views', 'customer', 'index.html'));
 });
+
+// investor routes
+app.get('/investor/dashboard', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/auth/login');
+  }
+
+  res.sendFile(path.join(__dirname, 'views', 'investor', 'index.html'));
+});
+
+// loan officer routes
+app.get('/loan_officer/dashboard', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/auth/login');
+  }
+
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'index.html'));
+});
+
 app.use('/api/accounts', require('./routes/accountRoutes'));
 app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/cards', require('./routes/cardRoutes'));

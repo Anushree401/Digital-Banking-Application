@@ -26,22 +26,38 @@ function displayPendingCards(cards) {
         return;
     }
 
+    const table = document.createElement('table');
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Card ID</th>
+                <th>Type</th>
+                <th>Account</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+
+    const tbody = table.querySelector('tbody');
+
     cards.forEach(card => {
-        const div = document.createElement('div');
-
-        div.innerHTML = `
-            <p>Card Type: ${card.card_type}</p>
-            <p>Account ID: ${card.account_id}</p>
-            <p>Status: ${card.status}</p>
-
-            <button onclick="approveCard(${card.id})">Approve</button>
-            <button onclick="rejectCard(${card.id})">Reject</button>
-
-            <hr/>
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>CRD${String(card.id).padStart(6, '0')}</td>
+            <td>${card.card_type}</td>
+            <td>${card.account_id}</td>
+            <td><span class="badge">${card.status}</span></td>
+            <td>
+                <button class="btn btn-approve" onclick="approveCard(${card.id})">Approve</button>
+                <button class="btn btn-reject" onclick="rejectCard(${card.id})">Reject</button>
+            </td>
         `;
-
-        container.appendChild(div);
+        tbody.appendChild(row);
     });
+
+    container.appendChild(table);
 }
 
 async function approveCard(id) {
