@@ -1,9 +1,206 @@
-@media (max-width: 1200px) {
+/* Tablet & iPad */
+@media (max-width: 1024px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+
+    .btn-approve,
+    .btn-reject,
+    .btn-primary,
+    .btn-secondary {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
 }
 
+/* Mobile - Tablets */
 @media (max-width: 768px) {
+    body {
+        grid-template-rows: 60px 1fr 52px;
+    }
+
+    .header-container {
+        padding: 0 16px;
+    }
+
+    .logo h1 {
+        font-size: 18px;
+    }
+
+    .sidebar {
+        width: 100%;
+        left: -100%;
+        padding-top: 70px;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .user-info {
+        gap: 8px;
+    }
+
+    .user-name {
+        display: none;
+    }
+
+    .logout-btn {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        padding: 16px;
+    }
+
+    .welcome-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .quick-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .hero-panel {
+        flex-direction: column;
+    }
+
+    .section-header {
+        flex-direction: column;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .section,
+    .card {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .section h3,
+    .card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    .info-item {
+        padding: 10px 0;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .info-item .label {
+        margin-bottom: 4px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .btn-approve,
+    .btn-reject,
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
 }
 
+/* Small phones */
 @media (max-width: 480px) {
+    html {
+        font-size: 12px;
+    }
+
+    .logo h1 {
+        font-size: 16px;
+    }
+
+    .welcome-section h2 {
+        font-size: 1.2rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-card h3 {
+        font-size: 0.7rem;
+    }
+
+    .section,
+    .card {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .hero-panel {
+        padding: 14px;
+    }
+
+    .hero-chip {
+        width: 100%;
+        text-align: center;
+    }
+
+    th,
+    td {
+        padding: 6px;
+        font-size: 0.75rem;
+    }
+
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 3px 6px;
+    }
 }
 

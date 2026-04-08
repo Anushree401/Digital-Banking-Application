@@ -3,50 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Loan Officer Dashboard - BrokeBank</title>
+    <title>Loan Officer Dashboard - Digital Banking</title>
+    <link rel="stylesheet" href="/loan-officer/css/style.css">
+    <link rel="stylesheet" href="/loan-officer/css/responsive.css">
 </head>
 <body>
-    <nav class="sidebar">
-        <div class="brand">BrokeBank Officer</div>
-        <ul class="nav-menu">
-            <li class="nav-item"><a href="index.html" class="nav-link active">Dashboard</a></li>
-            <li class="nav-item"><a href="applications.html" class="nav-link">Loan Applications</a></li>
-            <li class="nav-item"><a href="kyc.html" class="nav-link">KYC Verification</a></li>
-            <li class="nav-item"><a href="customer.html" class="nav-link">Customer Details</a></li>
-            <li class="nav-item"><a href="cards.html" class="nav-link">Card Requests</a></li>
-        </ul>
-    </nav>
-
-    <main class="content">
-        <header>
-            <h1>Loan Officer Dashboard</h1>
-            <div class="user-profile">
-                <div class="officer-meta">
-                    <div class="officer-name">Sarah Johnson</div>
-                    <div class="officer-role">Loan Officer</div>
-                </div>
-                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson" alt="Profile">
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
             </div>
-        </header>
-
-        <div class="details-grid">
-            <div class="card">
-                <h3>Pipeline Health</h3><br>
-                <div class="info-item"><span class="label">Pending Applications</span><span class="value" id="loPendingApplications">--</span></div>
-                <div class="info-item"><span class="label">KYC In Review</span><span class="value" id="loKycReview">--</span></div>
-                <div class="info-item"><span class="label">Approvals This Week</span><span class="value" id="loApprovalsWeek">--</span></div>
-                <div class="info-item"><span class="label">Portfolio Risk</span><span class="value value-success" id="loRiskState">--</span></div>
-            </div>
-            <div class="card">
-                <h3>Action Queue</h3><br>
-                <div class="info-item"><span class="label">Needs Decision Today</span><span class="value" id="loDecisionToday">--</span></div>
-                <div class="info-item"><span class="label">Card Cases Pending</span><span class="value" id="loCardPending">--</span></div>
-                <div class="info-item"><span class="label">Customer Escalations</span><span class="value" id="loEscalations">--</span></div>
-                <div class="info-item"><span class="label">SLA Adherence</span><span class="value" id="loSla">--</span></div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Officer</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
             </div>
         </div>
+    </header>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item active"><a href="/loan-officer/index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="/loan-officer/applications.html">Loan Applications</a></li>
+            <li class="nav-item"><a href="/loan-officer/kyc.html">KYC Verification</a></li>
+            <li class="nav-item"><a href="/loan-officer/customer.html">Customer Details</a></li>
+            <li class="nav-item"><a href="/loan-officer/cards.html">Card Requests</a></li>
+        </ul>
+    </nav>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="hero-panel">
+                <div>
+                    <p class="eyebrow">Loan officer workspace</p>
+                    <h2>Welcome back, <span id="welcomeName">Officer</span></h2>
+                    <p class="date" id="currentDate"></p>
+                </div>
+                <div class="hero-chip">Live queue synced from the API</div>
+            </section>
+
+            <section class="quick-stats">
+                <div class="stat-card">
+                    <h3>Pending Applications</h3>
+                    <p class="stat-value" id="loPendingApplications">0</p>
+                    <span class="stat-label">Awaiting review</span>
+                </div>
+                <div class="stat-card">
+                    <h3>KYC Review</h3>
+                    <p class="stat-value" id="loKycReview">0</p>
+                    <span class="stat-label">Pending verification</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Cards</h3>
+                    <p class="stat-value" id="loCardPending">0</p>
+                    <span class="stat-label">Card requests in queue</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Risk State</h3>
+                    <p class="stat-value" id="loRiskState">--</p>
+                    <span class="stat-label">Portfolio signal</span>
+                </div>
+            </section>
+
+            <section class="dashboard-grid">
+                <div class="section panel panel-wide">
+                    <div class="section-header">
+                        <div>
+                            <h3>Loan Review Queue</h3>
+                            <p class="section-subtitle">Recent applications with customer context</p>
+                        </div>
+                        <a class="inline-link" href="/loan-officer/applications.html">Open full queue</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Loan</th>
+                                    <th>Customer</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Applied</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardLoansBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section panel">
+                    <div class="section-header">
+                        <div>
+                            <h3>Pending Card Requests</h3>
+                            <p class="section-subtitle">Fast approvals and rejects</p>
+                        </div>
+                        <a class="inline-link" href="/loan-officer/cards.html">Open cards</a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Card</th>
+                                    <th>Customer</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Requested</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardCardsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="dashboard-grid">
+                <div class="section panel">
+                    <div class="section-header">
+                        <div>
+                            <h3>Customer Snapshot</h3>
+                            <p class="section-subtitle">High-level account and KYC context</p>
+                        </div>
+                        <a class="inline-link" href="/loan-officer/customer.html">Open customers</a>
+                    </div>
+                    <div id="customerSnapshots" class="customer-list"></div>
+                </div>
+
+                <div class="section panel">
+                    <h3>Operations Notes</h3>
+                    <div class="info-item">
+                        <span class="label">Needs Decision Today</span>
+                        <span class="value" id="loDecisionToday">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Approvals This Week</span>
+                        <span class="value" id="loApprovalsWeek">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">KYC Queue</span>
+                        <span class="value" id="loKycReview2">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">SLA Adherence</span>
+                        <span class="value value-success" id="loSla">--</span>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
-    <script src="../../middleware/loan-officer/dashboard.js"></script>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
+    </footer>
+    <script src="/middleware/shared/main.js"></script>
+    <script src="/middleware/loan-officer/dashboard.js"></script>
 </body>
 </html>

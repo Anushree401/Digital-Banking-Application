@@ -26,6 +26,7 @@ async function seed() {
       'Loans',
       'Cards',
       'Transactions',
+      'Accounts',
       'AccountHolders',
       'FixedDeposits',
       'Investors',

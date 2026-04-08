@@ -3,69 +3,74 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-function loadFDData() {
-    const mockFDs = [
-        { 
-            id: 1, 
-            amount: 10000, 
-            interestRate: 5.2, 
-            tenure: 12, 
-            startDate: '2026-01-01',
-            maturityDate: '2027-01-01',
-            maturityAmount: 10520,
-            status: 'Active'
-        },
-        { 
-            id: 2, 
-            amount: 25000, 
-            interestRate: 5.8, 
-            tenure: 24, 
-            startDate: '2025-08-01',
-            maturityDate: '2027-08-01',
-            maturityAmount: 27900,
-            status: 'Active'
+async function loadFDData() {
+    try {
+        const res = await fetch('/api/fds', { credentials: 'include' });
+        
+        if (!res.ok) {
+            console.error('Failed to load FDs:', res.status);
+            document.getElementById('fdList').innerHTML = '<p>Unable to load fixed deposits</p>';
+            return;
         }
-    ];
 
-    displayFDs(mockFDs);
+        const fds = await res.json();
+        displayFDs(fds);
+    } catch (err) {
+        console.error('Error loading FDs:', err);
+        document.getElementById('fdList').innerHTML = '<p>Error loading fixed deposits</p>';
+    }
 }
 
 function displayFDs(fds) {
     const fdList = document.getElementById('fdList');
     fdList.innerHTML = '';
 
+    if (!fds || fds.length === 0) {
+        fdList.innerHTML = '<p style="text-align: center; padding: 20px;">No fixed deposits</p>';
+        return;
+    }
+
     fds.forEach(fd => {
         const fdCard = document.createElement('div');
         fdCard.className = 'deposit-card';
         
+        const principal = parseFloat(fd.principal_amount || 0);
+        const rate = parseFloat(fd.interest_rate || 0);
+        const startDate = new Date(fd.start_date);
+        const maturityDate = new Date(fd.maturity_date);
+        const tenureMonths = Math.round((maturityDate - startDate) / (1000 * 60 * 60 * 24 * 30));
+        
+        // Calculate maturity amount: A = P(1 + r/100)^(n/12)
+        const maturityAmount = principal * Math.pow(1 + (rate / 100), tenureMonths / 12);
+        
         fdCard.innerHTML = `
             <div class="deposit-header">
                 <h4>Fixed Deposit #${fd.id}</h4>
-                <span class="status-badge status-active">${fd.status}</span>
+                <span class="status-badge status-${(fd.status || 'active').toLowerCase()}">${fd.status || 'active'}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Principal Amount</span>
-                <span class="info-value">$${fd.amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                <span class="info-value">$${principal.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Interest Rate</span>
-                <span class="info-value">${fd.interestRate}% p.a.</span>
+                <span class="info-value">${rate.toFixed(2)}% p.a.</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Tenure</span>
-                <span class="info-value">${fd.tenure} months</span>
+                <span class="info-value">${tenureMonths} months</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Start Date</span>
-                <span class="info-value">${fd.startDate}</span>
+                <span class="info-value">${startDate.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Maturity Date</span>
-                <span class="info-value">${fd.maturityDate}</span>
+                <span class="info-value">${maturityDate.toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'})}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Maturity Amount</span>
-                <span class="info-value" style="color: #5eb575; font-size: 18px;">$${fd.maturityAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                <span class="info-value" style="color: #5eb575; font-size: 18px;">$${maturityAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
             </div>
         `;
         fdList.appendChild(fdCard);

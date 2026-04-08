@@ -3,50 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>KYC Verification - BrokeBank</title>
+    <title>KYC Verification - Digital Banking</title>
+    <link rel="stylesheet" href="/loan-officer/css/style.css">
+    <link rel="stylesheet" href="/loan-officer/css/responsive.css">
 </head>
 <body>
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Officer</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </header>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <nav class="sidebar">
-        <div class="brand">SecureBank</div>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="applications.html" class="nav-link">Loan Applications</a></li>
-            <li class="nav-item"><a href="kyc.html" class="nav-link active">KYC Verification</a></li>
-            <li class="nav-item"><a href="customer.html" class="nav-link">Customer Details</a></li>
+            <li class="nav-item"><a href="/loan-officer/index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="/loan-officer/applications.html">Loan Applications</a></li>
+            <li class="nav-item active"><a href="/loan-officer/kyc.html">KYC Verification</a></li>
+            <li class="nav-item"><a href="/loan-officer/customer.html">Customer Details</a></li>
+            <li class="nav-item"><a href="/loan-officer/cards.html">Card Requests</a></li>
         </ul>
     </nav>
-
-    <main class="content">
-        <header>
-            <h1>KYC Verification</h1>
-            <div class="user-profile">
-                <div class="officer-meta">
-                    <div class="officer-name">Sarah Johnson</div>
-                    <div class="officer-role">Loan Officer</div>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="hero-panel compact">
+                <div>
+                    <p class="eyebrow">KYC queue</p>
+                    <h2>KYC Verification Queue</h2>
+                    <p class="date">Review customer KYC documents and update verification status</p>
                 </div>
-                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson" alt="Profile">
-            </div>
-        </header>
+            </section>
 
-        <div class="card table-wrap">
-            <div class="table-header">
-                <h3>Pending Verifications</h3>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Customer ID</th>
-                        <th>Name</th>
-                        <th>PAN Number</th>
-                        <th>Aadhaar Number</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="kycBody"></tbody>
-            </table>
+            <section class="section panel">
+                <div class="section-header">
+                    <div>
+                        <h3>KYC Cases in Review</h3>
+                        <p class="section-subtitle">Customer records are pulled from the live customer API</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table id="kycTable">
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Customer Name</th>
+                                <th>Email</th>
+                                <th>KYC Status</th>
+                                <th>Primary Account</th>
+                                <th>Documents</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="kycBody"></tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </main>
-    <script src="../../middleware/loan-officer/kyc.js"></script>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
+    </footer>
+    <script src="/middleware/shared/main.js"></script>
+    <script src="/middleware/loan-officer/kyc.js"></script>
 </body>
 </html>

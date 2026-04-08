@@ -3,70 +3,75 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-function loadLoansData() {
-    const mockLoans = [
-        { 
-            id: 1, 
-            type: 'Personal Loan', 
-            amount: 12000, 
-            disbursed: 12000,
-            outstanding: 8400, 
-            tenure: 36, 
-            monthsLeft: 24, 
-            interestRate: 9.2, 
-            emi: 485.00,
-            status: 'Active'
-        },
-        { 
-            id: 2, 
-            type: 'Home Loan', 
-            amount: 185000, 
-            disbursed: 185000,
-            outstanding: 142000, 
-            tenure: 240, 
-            monthsLeft: 198, 
-            interestRate: 6.8, 
-            emi: 2150.00,
-            status: 'Active'
+async function loadLoansData() {
+    try {
+        const res = await fetch('/api/loans', { credentials: 'include' });
+        
+        if (!res.ok) {
+            console.error('Failed to load loans:', res.status);
+            document.getElementById('loansList').innerHTML = '<p>Unable to load loans</p>';
+            return;
         }
-    ];
 
-    displayLoans(mockLoans);
+        const loans = await res.json();
+        displayLoans(loans);
+    } catch (err) {
+        console.error('Error loading loans:', err);
+        document.getElementById('loansList').innerHTML = '<p>Error loading loans</p>';
+    }
 }
 
 function displayLoans(loans) {
     const loansList = document.getElementById('loansList');
     loansList.innerHTML = '';
 
+    if (!loans || loans.length === 0) {
+        loansList.innerHTML = '<p style="text-align: center; padding: 20px;">No active loans</p>';
+        return;
+    }
+
     loans.forEach(loan => {
         const loanCard = document.createElement('div');
         loanCard.className = 'loan-card';
-        const paidPercent = ((loan.tenure - loan.monthsLeft) / loan.tenure * 100).toFixed(1);
+        
+        const principal = parseFloat(loan.principal_amount || 0);
+        const rate = parseFloat(loan.interest_rate || 0);
+        const tenure = parseInt(loan.tenure_months || 1);
+        
+        // Calculate EMI using simple formula: EMI = P(r/12)(1+r/12)^n / ((1+r/12)^n - 1)
+        const monthlyRate = (rate / 12) / 100;
+        const emi = monthlyRate > 0 
+            ? (principal * monthlyRate * Math.pow(1 + monthlyRate, tenure)) / (Math.pow(1 + monthlyRate, tenure) - 1)
+            : (principal / tenure);
+        
+        // Estimate outstanding based on EMI payments (assuming 30% paid)
+        const paidPercent = 30;
+        const outstanding = principal * (1 - paidPercent / 100);
         
         loanCard.innerHTML = `
             <div class="loan-header">
-                <h4>${loan.type}</h4>
-                <span class="status-badge status-active">${loan.status}</span>
+                <h4>${loan.loan_type || 'Loan'}</h4>
+                <span class="status-badge status-${(loan.status || 'pending').toLowerCase()}">${loan.status || 'pending'}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Loan Amount</span>
-                <span class="info-value">$${loan.amount.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                <span class="info-value">$${principal.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Outstanding</span>
-                <span class="info-value">$${loan.outstanding.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                <span class="info-value">$${outstanding.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">EMI Amount</span>
-                <span class="info-value">$${loan.emi.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
+                <span class="info-label">Monthly EMI</span>
+                <span class="info-value">$${emi.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Interest Rate</span>
-                <span class="info-value">${loan.interestRate}% p.a.</span>
+                <span class="info-value">${rate.toFixed(2)}% p.a.</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Months Remaining</span>
-                <span class="info-value">${loan.monthsLeft} of ${loan.tenure}</span>
+                <span class="info-label">Tenure</span>
+                <span class="info-value">${tenure} months</span>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" style="width: ${paidPercent}%"></div>

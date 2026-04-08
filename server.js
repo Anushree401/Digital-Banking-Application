@@ -36,8 +36,8 @@ app.use(
   express.static(path.join(__dirname, 'middleware'))
 );
 app.use(
-    '/customer', 
-    express.static(path.join(__dirname, 'views', 'customer'))
+  '/customer', 
+  express.static(path.join(__dirname, 'views', 'customer'))
 );
 
 app.use(
@@ -46,9 +46,21 @@ app.use(
 );
 
 app.use(
-    '/loan-officer', 
-    express.static(path.join(__dirname, 'views', 'loan-officer'))
+    '/loan-officer/css', 
+    express.static(path.join(__dirname, 'views', 'loan-officer', 'css'))
 );
+
+function requireAuthenticatedLoanOfficer(req, res, next) {
+  if (!req.session.user) {
+    return res.redirect('/auth/login');
+  }
+
+  if (req.session.user.role !== 'loan_officer') {
+    return res.redirect('/auth/login');
+  }
+
+  next();
+}
 
 //session config 
 app.use(
@@ -95,26 +107,68 @@ app.get('/investor/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'investor', 'index.html'));
 });
 
-// loan officer routes
+// loan officer routes - generalized catch-all for all pages
+app.get(['/loan-officer', '/loan-officer/'], requireAuthenticatedLoanOfficer, (req, res) => {
+  res.redirect('/loan-officer/index.html');
+});
+
+app.get('/loan-officer/index.html', requireAuthenticatedLoanOfficer, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'index.html'));
+});
+
+app.get('/loan-officer/applications.html', requireAuthenticatedLoanOfficer, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'applications.html'));
+});
+
+app.get('/loan-officer/kyc.html', requireAuthenticatedLoanOfficer, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'kyc.html'));
+});
+
+app.get('/loan-officer/customer.html', requireAuthenticatedLoanOfficer, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'customer.html'));
+});
+
+app.get('/loan-officer/cards.html', requireAuthenticatedLoanOfficer, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'cards.html'));
+});
+
+app.get('/loan-officer/:page', requireAuthenticatedLoanOfficer, (req, res, next) => {
+  const pageMap = {
+    index: 'index.html',
+    applications: 'applications.html',
+    kyc: 'kyc.html',
+    customer: 'customer.html',
+    cards: 'cards.html'
+  };
+
+  const fileName = pageMap[req.params.page];
+
+  if (!fileName) {
+    return next();
+  }
+
+  res.sendFile(path.join(__dirname, 'views', 'loan-officer', fileName));
+});
+
+// Alternative underscore route (for backward compatibility)
 app.get('/loan_officer/dashboard', (req, res) => {
   if (!req.session.user) {
     return res.redirect('/auth/login');
   }
 
-  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'index.html'));
+  res.redirect('/loan-officer/index.html');
 });
 
+// API routes
 app.use('/api/accounts', require('./routes/accountRoutes'));
 app.use('/api/transactions', require('./routes/transactionRoutes'));
 app.use('/api/cards', require('./routes/cardRoutes'));
 app.use('/api/loans', require('./routes/loanRoutes'));
 app.use('/api/fds', require('./routes/fdRoutes'));
 app.use('/api/investments', require('./routes/investmentRoutes'));
+app.use('/api/customers', require('./routes/customerRoutes'));
 app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
-app.get('/loan-officer/cards', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'loan-officer', 'cards.html'));
-});
 
 // start server after db connect
 sequelize.authenticate()

@@ -1,6 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
 	loadLoanApplications();
+	setupEventListeners();
 });
+
+function formatCurrency(value) {
+	return `₹${Number(value || 0).toLocaleString('en-IN')}`;
+}
+
+function formatDate(value) {
+	if (!value) return '--';
+	return new Date(value).toLocaleDateString('en-IN', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric'
+	});
+}
 
 async function loadLoanApplications() {
 	const tbody = document.getElementById('loanApplicationsBody');
@@ -13,29 +27,88 @@ async function loadLoanApplications() {
 		tbody.innerHTML = '';
 
 		if (!loans.length) {
-			tbody.innerHTML = '<tr><td colspan="7">No loan applications found.</td></tr>';
+			tbody.innerHTML = '<tr><td colspan="8">No loan applications found.</td></tr>';
 			return;
 		}
 
 		loans.forEach(loan => {
+			const status = String(loan.status || 'pending').toLowerCase();
 			const tr = document.createElement('tr');
-			const status = String(loan.status || 'pending');
 			tr.innerHTML = `
 				<td>LN${String(loan.id).padStart(6, '0')}</td>
-				<td>Customer #${loan.customer_id}</td>
+				<td>${loan.customer_name || `Customer #${loan.customer_id}`}</td>
 				<td>${loan.loan_type || '--'}</td>
-				<td>₹${Number(loan.principal_amount || 0).toLocaleString('en-IN')}</td>
-				<td>--</td>
-				<td><span class="badge">${status}</span></td>
+				<td>${formatCurrency(loan.principal_amount)}</td>
+				<td>${loan.interest_rate || '--'}%</td>
+				<td>${formatDate(loan.applied_at)}</td>
+				<td><span class="status-badge status-${status}">${status}</span></td>
 				<td>
-					<button class="btn btn-approve" data-id="${loan.id}">Approve</button>
-					<button class="btn btn-reject" data-id="${loan.id}">Reject</button>
+					<div class="action-buttons">
+						<button class="btn-approve" data-action="approve" data-id="${loan.id}" ${status !== 'pending' ? 'disabled' : ''}>Approve</button>
+						<button class="btn-reject" data-action="reject" data-id="${loan.id}" ${status !== 'pending' ? 'disabled' : ''}>Reject</button>
+					</div>
 				</td>
 			`;
 			tbody.appendChild(tr);
 		});
 	} catch (err) {
 		console.error('Loan applications load failed:', err);
-		tbody.innerHTML = '<tr><td colspan="7">Unable to load applications.</td></tr>';
+		tbody.innerHTML = '<tr><td colspan="8">Unable to load applications.</td></tr>';
+	}
+}
+
+async function updateLoanStatus(id, action) {
+	try {
+		const res = await fetch(`/api/loans/${action}/${id}`, {
+			method: 'PUT',
+			credentials: 'include'
+		});
+
+		const data = await res.json();
+		if (!res.ok) {
+			throw new Error(data.error || 'Unable to update loan status');
+		}
+
+		alert(data.message || 'Loan updated');
+		loadLoanApplications();
+	} catch (err) {
+		alert(err.message);
+	}
+}
+
+function setupEventListeners() {
+	const hamburgerBtn = document.getElementById('hamburgerBtn');
+	const sidebar = document.querySelector('.sidebar');
+	const overlay = document.getElementById('sidebarOverlay');
+
+	if (hamburgerBtn && sidebar && overlay) {
+		hamburgerBtn.addEventListener('click', function() {
+			hamburgerBtn.classList.toggle('active');
+			sidebar.classList.toggle('active');
+			overlay.classList.toggle('active');
+		});
+
+		overlay.addEventListener('click', function() {
+			hamburgerBtn.classList.remove('active');
+			sidebar.classList.remove('active');
+			overlay.classList.remove('active');
+		});
+	}
+
+	const tbody = document.getElementById('loanApplicationsBody');
+	if (tbody) {
+		tbody.addEventListener('click', event => {
+			const button = event.target.closest('button[data-action][data-id]');
+			if (!button) return;
+
+			updateLoanStatus(button.dataset.id, button.dataset.action);
+		});
+	}
+
+	const logoutBtn = document.getElementById('logoutBtn');
+	if (logoutBtn) {
+		logoutBtn.addEventListener('click', function() {
+			window.location.href = '/shared/login.html';
+		});
 	}
 }

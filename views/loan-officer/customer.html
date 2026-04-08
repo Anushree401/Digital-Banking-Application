@@ -3,48 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Customer Details - BrokeBank</title>
+    <title>Customer Details - Digital Banking</title>
+    <link rel="stylesheet" href="/loan-officer/css/style.css">
+    <link rel="stylesheet" href="/loan-officer/css/responsive.css">
 </head>
 <body>
-    <nav class="sidebar">
-        <div class="brand">SecureBank</div>
-        <ul class="nav-menu">
-            <li class="nav-item"><a href="applications.html" class="nav-link">Loan Applications</a></li>
-            <li class="nav-item"><a href="kyc.html" class="nav-link">KYC Verification</a></li>
-            <li class="nav-item"><a href="customer.html" class="nav-link active">Customer Details</a></li>
-        </ul>
-    </nav>
-
-    <main class="content">
-        <header>
-            <h1>Customer Profile</h1>
-            <div class="user-profile">
-                <div class="officer-meta">
-                    <div class="officer-name">Sarah Johnson</div>
-                    <div class="officer-role">Loan Officer</div>
-                </div>
-                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson" alt="Profile">
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
             </div>
-        </header>
-
-        <div class="details-grid">
-            <div class="card">
-                <h3>Personal Information</h3><br>
-                <div class="info-item"><span class="label">Selected Customer</span><span class="value" id="custName">--</span></div>
-                <div class="info-item"><span class="label">Email</span><span class="value" id="custEmail">--</span></div>
-                <div class="info-item"><span class="label">Phone</span><span class="value" id="custPhone">--</span></div>
-                <div class="info-item"><span class="label">KYC Status</span><span class="value value-success" id="custKyc">--</span></div>
-            </div>
-            <div class="card">
-                <h3>Account Summary</h3><br>
-                <div class="info-item"><span class="label">Primary Account</span><span class="value" id="custAccount">--</span></div>
-                <div class="info-item"><span class="label">Current Balance</span><span class="value" id="custBalance">--</span></div>
-                <div class="info-item"><span class="label">Active Loans</span><span class="value" id="custLoans">--</span></div>
-                <div class="info-item"><span class="label">Risk Profile</span><span class="value" id="custRisk">--</span></div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Officer</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
             </div>
         </div>
+    </header>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="/loan-officer/index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="/loan-officer/applications.html">Loan Applications</a></li>
+            <li class="nav-item"><a href="/loan-officer/kyc.html">KYC Verification</a></li>
+            <li class="nav-item active"><a href="/loan-officer/customer.html">Customer Details</a></li>
+            <li class="nav-item"><a href="/loan-officer/cards.html">Card Requests</a></li>
+        </ul>
+    </nav>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="hero-panel compact">
+                <div>
+                    <p class="eyebrow">Customer workspace</p>
+                    <h2>Customer Information</h2>
+                    <p class="date">View customer profile, accounts, and loan history</p>
+                </div>
+            </section>
+
+            <section class="dashboard-grid">
+                <div class="section panel">
+                    <div class="section-header">
+                        <div>
+                            <h3>Customer Directory</h3>
+                            <p class="section-subtitle">Select a customer to inspect account and risk context</p>
+                        </div>
+                    </div>
+                    <div id="customerList" class="customer-list"></div>
+                </div>
+
+                <div class="section panel">
+                    <div class="section-header">
+                        <div>
+                            <h3>Selected Customer Profile</h3>
+                            <p class="section-subtitle">Live details from the database</p>
+                        </div>
+                    </div>
+                    <div id="customerDetail" class="detail-stack"></div>
+                </div>
+            </section>
+        </div>
     </main>
-    <script src="../../middleware/loan-officer/customers.js"></script>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
+    </footer>
+    <script src="/middleware/shared/main.js"></script>
+    <script src="/middleware/loan-officer/customers.js"></script>
 </body>
 </html>

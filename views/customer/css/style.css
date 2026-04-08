@@ -396,6 +396,10 @@ tr:hover {
     resize: vertical;
 }
 
+.form-narrow {
+    max-width: 400px;
+}
+
 .card-visual {
     border-radius: 16px;
     color: #fff;

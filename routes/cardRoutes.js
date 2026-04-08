@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { Card, AccountHolder, Customer } = require('../database/models');
+const { Card, AccountHolder, Customer, Account, User } = require('../database/models');
 const { authorize } = require('../middleware/roleMiddleware');
 
 router.get('/', async (req, res) => {
@@ -123,10 +123,57 @@ router.get('/pending', authorize('loan_officer'), async (req, res) => {
     }
 
     const cards = await Card.findAll({
-      where: { status: 'pending' }
+      where: { status: 'pending' },
+      include: [
+        {
+          model: Account,
+          attributes: ['id', 'acc_no', 'acc_type', 'balance'],
+          include: [
+            {
+              model: AccountHolder,
+              attributes: ['customer_id', 'is_primary'],
+              include: [
+                {
+                  model: Customer,
+                  attributes: ['id', 'kyc_status'],
+                  include: [
+                    {
+                      model: User,
+                      attributes: ['fname', 'lname', 'email', 'phone']
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
     });
 
-    res.json(cards);
+    const mapped = cards.map(card => {
+      const account = card.Account || {};
+      const accountHolders = account.AccountHolders || [];
+      const primaryHolder = accountHolders.find(holder => holder.is_primary) || accountHolders[0] || {};
+      const customer = primaryHolder.Customer || {};
+      const customerUser = customer.User || {};
+
+      return {
+        id: card.id,
+        account_id: card.account_id,
+        account_number: account.acc_no || `ACC-${card.account_id}`,
+        account_type: account.acc_type || '--',
+        customer_id: primaryHolder.customer_id || null,
+        customer_name: [customerUser.fname, customerUser.lname].filter(Boolean).join(' ') || `Customer #${primaryHolder.customer_id || card.account_id}`,
+        customer_email: customerUser.email || '--',
+        card_type: card.card_type,
+        expiry_date: card.expiry_date,
+        status: card.status,
+        requested_at: card.createdAt
+      };
+    });
+
+    res.json(mapped);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -3,55 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>Loan Applications - BrokeBank</title>
+    <title>Loan Applications - Digital Banking</title>
+    <link rel="stylesheet" href="/loan-officer/css/style.css">
+    <link rel="stylesheet" href="/loan-officer/css/responsive.css">
 </head>
 <body>
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Officer</span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </header>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <nav class="sidebar">
-        <div class="brand">SecureBank</div>
         <ul class="nav-menu">
-            <li class="nav-item"><a href="applications.html" class="nav-link active">Loan Applications</a></li>
-            <li class="nav-item"><a href="kyc.html" class="nav-link">KYC Verification</a></li>
-            <li class="nav-item"><a href="customer.html" class="nav-link">Customer Details</a></li>
+            <li class="nav-item"><a href="/loan-officer/index.html">Dashboard</a></li>
+            <li class="nav-item active"><a href="/loan-officer/applications.html">Loan Applications</a></li>
+            <li class="nav-item"><a href="/loan-officer/kyc.html">KYC Verification</a></li>
+            <li class="nav-item"><a href="/loan-officer/customer.html">Customer Details</a></li>
+            <li class="nav-item"><a href="/loan-officer/cards.html">Card Requests</a></li>
         </ul>
     </nav>
-
-    <main class="content">
-        <header>
-            <h1>Loan Applications</h1>
-            <div class="user-profile">
-                <div class="officer-meta">
-                    <div class="officer-name">Sarah Johnson</div>
-                    <div class="officer-role">Loan Officer</div>
-                </div>
-                <img src="https://ui-avatars.com/api/?name=Sarah+Johnson" alt="Profile">
-            </div>
-        </header>
-
-        <div class="card table-wrap">
-            <div class="table-header">
-                <h3>Pending Applications</h3>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="hero-panel compact">
                 <div>
-                    <button class="btn">Filter</button>
-                    <button class="btn">Export</button>
+                    <p class="eyebrow">Loan queue</p>
+                    <h2>Loan Applications Review</h2>
+                    <p class="date">Review and approve pending loan applications</p>
                 </div>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Loan ID</th>
-                        <th>Customer Name</th>
-                        <th>Loan Type</th>
-                        <th>Amount</th>
-                        <th>Applied Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="loanApplicationsBody"></tbody>
-            </table>
+            </section>
+
+            <section class="section panel">
+                <div class="section-header">
+                    <div>
+                        <h3>Pending Applications</h3>
+                        <p class="section-subtitle">Includes customer name, request time, and approval controls</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table id="loanApplicationsTable">
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Customer</th>
+                                <th>Loan Type</th>
+                                <th>Amount</th>
+                                <th>Rate</th>
+                                <th>Applied Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loanApplicationsBody"></tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </main>
-    <script src="../../middleware/loan-officer/applications.js"></script>
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
+    </footer>
+    <script src="/middleware/shared/main.js"></script>
+    <script src="/middleware/loan-officer/applications.js"></script>
 </body>
 </html>
