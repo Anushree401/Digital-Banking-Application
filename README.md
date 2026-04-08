@@ -210,32 +210,36 @@ This project is designed for:
 * Fraud detection simulation
 * Advanced analytics dashboard
 
----
+--
 
-## Local Database Setup
-
-This project uses Sequelize with PostgreSQL.
-
-Set your local database values in `.env` using either a full URL or the explicit fields below:
-
-* `DEV_DATABASE_URL=postgres://postgres:yourpassword@localhost:5432/banking_app`
-* or `DEV_DB_NAME=banking_app`
-* or `DEV_DB_USER=postgres`
-* or `DEV_DB_PASSWORD=yourpassword`
-* or `DEV_DB_HOST=localhost`
-* or `DEV_DB_PORT=5432`
-
-Then run:
+# HOW TO RUN THIS PROJECT
 
 ```bash
-npm run db:migrate
-npm run db:seed
+1. npm install
+2. <create .env>
+	DATABASE_URL=
+	DEV_DATABASE_URL=
+	TEST_DATABASE_URL=
+	SECRET_KEY_APP=
+	JWT_SECRET_KEY=
+	PORT=
+3. <use pgadmin to make db in ur local db>
+4. <make sure this is there in database/config/config.js>
+	require('dotenv').config()
+	module.exports = {
+	  development: {
+		url: process.env.DEV_DATABASE_URL,
+		dialect: 'postgres',
+	  },
+	  test: {
+		url: process.env.TEST_DATABASE_URL,
+		dialect: 'postgres',
+	  },
+	  production: {
+		url: process.env.DATABASE_URL,
+		dialect: 'postgres',
+	  },
+	}
+5. npx sequelize db.migrate 
+6. npm start OR node server.js
 ```
-
-Or do both in one step:
-
-```bash
-npm run db:init
-```
-
-If you want to reset and rerun everything, drop the database in pgAdmin first, recreate it, and run `npm run db:init` again.
