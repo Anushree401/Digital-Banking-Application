@@ -46,6 +46,22 @@ module.exports = (sequelize, DataTypes) => {
     approved_by: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },
+
+    paid_months: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+
+    outstanding_amount: {
+      type: DataTypes.DECIMAL(15,2),
+      allowNull: true
+    },
+
+    emi_amount: {
+      type: DataTypes.DECIMAL(15,2),
+      allowNull: true
     }
 
   }, {});

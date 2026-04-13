@@ -13,36 +13,36 @@ function displayCurrentDate() {
 
 async function loadDashboardData() {
     try {
-        const res = await fetch('/api/dashboard', {credentials: 'include'});
+        const res = await fetch('/api/dashboard', { credentials: 'include' });
+
+        if (!res.ok) {
+            throw new Error("Unauthorized or server error");
+        }
+
         const data = await res.json();
 
-        document.getElementById('welcomeName').textContent = 'User';
-        document.getElementById('userName').textContent = 'User';
+        // Dynamic user
+        document.getElementById('welcomeName').textContent = data.user?.name || 'User';
+        document.getElementById('userName').textContent = data.user?.name || 'User';
 
         document.getElementById('totalBalance').textContent =
-            `$${data.totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            `$${(data.totalBalance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
         document.getElementById('monthlyIncome').textContent =
-            `$${data.monthlyIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            `$${(data.monthlyIncome || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
         document.getElementById('monthlyExpenses').textContent =
-            `$${data.monthlyExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+            `$${(data.monthlyExpenses || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
 
-        document.getElementById('activeLoans').textContent = data.activeLoans;
+        document.getElementById('activeLoans').textContent = data.activeLoans || 0;
 
-        displayTransactions(
-            data.transactions.map(tx => ({
-                date: new Date(tx.timestamp).toLocaleDateString(),
-                description: tx.description,
-                type: tx.transaction_type,
-                amount: tx.amount
-            }))
-        );
-
-        // displayAccounts(data.accounts);
+        displayTransactions(data.transactions || []);
+        displayAccounts(data.accounts || []);
 
     } catch (err) {
         console.error('Dashboard error:', err);
+        alert("Session expired. Please login again.");
+        window.location.href = '../shared/login.html';
     }
 }
 
@@ -67,17 +67,17 @@ function displayAccounts(accounts) {
 function displayTransactions(transactions) {
     const tbody = document.getElementById('transactionsBody');
     tbody.innerHTML = '';
-
-    transactions.forEach(transaction => {
+    transactions.forEach(tx => {
         const row = document.createElement('tr');
-        const amountClass = transaction.type === 'Credit' ? 'transaction-credit' : 'transaction-debit';
-        const amountPrefix = transaction.type === 'Credit' ? '+' : '';
-        
+        const type = tx.transaction_type || tx.type;
+        const amount = tx.amount;
         row.innerHTML = `
-            <td>${transaction.date}</td>
-            <td>${transaction.description}</td>
-            <td>${transaction.type}</td>
-            <td class="${amountClass}">${amountPrefix}$${Math.abs(transaction.amount).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+            <td>${new Date(tx.timestamp).toLocaleDateString()}</td>
+            <td>${tx.description || '—'}</td>
+            <td>${type}</td>
+            <td class="${type === 'Credit' ? 'transaction-credit' : 'transaction-debit'}">
+                ${type === 'Credit' ? '+' : '-'}$${Math.abs(amount).toFixed(2)}
+            </td>
         `;
         tbody.appendChild(row);
     });
@@ -101,8 +101,9 @@ function setupEventListeners() {
         overlay.classList.remove('active');
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        alert('Logout functionality will be implemented');
+    document.getElementById('logoutBtn').addEventListener('click', async function() {
+        // alert('Logout functionality will be implemented');
+        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
         window.location.href = '../shared/login.html';
     });
 
@@ -112,12 +113,66 @@ function setupEventListeners() {
         });
     });
 
-    document.getElementById('payBillBtn').addEventListener('click', function() {
-        alert('Pay Bills functionality will be implemented');
+    document.getElementById('payBillBtn').addEventListener('click', async function() {
+        const recipientAccountNumber = document.getElementById('recipientAccountNumber').value;
+        const amount = Number(document.getElementById('transferAmount').value);
+        
+        if (recipientAccountNumber && amount > 0) {
+            try {
+                const response = await fetch('../api/transactions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        recipientAccountNumber,
+                        amount,
+                        type: 'Transfer'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Transfer successful');
+                    window.location.reload();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                alert('Transfer failed');
+            }
+        } else {
+            alert('Please fill in all fields');
+        }
     });
 
-    document.getElementById('depositBtn').addEventListener('click', function() {
-        alert('Deposit functionality will be implemented');
+    document.getElementById('depositBtn').addEventListener('click', async function() {
+        const amount = prompt("Enter deposit amount:");
+
+        if (!amount || amount <= 0) {
+            alert("Invalid amount");
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/transactions/deposit', {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: Number(amount) })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alert("Deposit successful");
+                location.reload();
+            } else {
+                alert(data.error);
+            }
+
+        } catch (err) {
+            alert("Deposit failed");
+        }
     });
 
     document.getElementById('applyLoanBtn').addEventListener('click', function() {
