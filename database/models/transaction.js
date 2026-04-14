@@ -1,7 +1,5 @@
 'use strict';
 
-const { DataTypes } = require("sequelize");
-
 module.exports = (sequelize, DataTypes) => {
 
   const Transaction = sequelize.define('Transaction', {
@@ -14,12 +12,12 @@ module.exports = (sequelize, DataTypes) => {
 
     from_account_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true   // system transactions allowed
     },
 
     to_account_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true   // bills / FD / deposits
     },
 
     amount: {
@@ -28,42 +26,33 @@ module.exports = (sequelize, DataTypes) => {
     },
 
     transaction_type: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING,   // 'Debit', 'Credit'
       allowNull: false
     },
 
     timestamp: {
       type: DataTypes.DATE,
-      allowNull: false,
       defaultValue: DataTypes.NOW
     },
 
     status: {
       type: DataTypes.STRING,
-      allowNull: false,
       defaultValue: 'success'
     },
 
     description: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-
-    transaction_category: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING   // "FD Created", "Bill Payment", etc.
     }
 
   }, {});
 
   Transaction.associate = function(models) {
 
-    // Sender Account
     Transaction.belongsTo(models.Account, {
       foreignKey: 'from_account_id',
       as: 'fromAccount'
     });
 
-    // Receiver Account
     Transaction.belongsTo(models.Account, {
       foreignKey: 'to_account_id',
       as: 'toAccount'
