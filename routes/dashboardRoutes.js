@@ -33,6 +33,16 @@ router.get('/', async (req, res) => {
     console.log("ACCOUNTS:", accounts);
     // Get user's transactions
     const transactions = await Transaction.findAll({
+      attributes: [
+        'id',
+        'from_account_id',
+        'to_account_id',
+        'amount',
+        'transaction_type',
+        'timestamp',
+        'status',
+        'description'
+      ],
       where: {
         [require('sequelize').Op.or]: [
           { from_account_id: accountIds },

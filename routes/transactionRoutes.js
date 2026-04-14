@@ -98,7 +98,9 @@ router.post('/transfer', async (req, res) => {
       to_account_id: toAcc.id,
       amount,
       transaction_type: 'Debit',
-      description: 'Transfer Sent'
+      description: 'Transfer Sent',
+      transaction_category: 'transfer',
+      status: 'success'
     });
 
     // credit (receiver)
@@ -153,7 +155,9 @@ router.post('/bill', async (req, res) => {
             to_account_id: billerAcc.id,
             amount,
             transaction_type: 'Debit', 
-            description: `Bill payment: ${toAccount}`
+            description: `Bill payment: ${toAccount}`,
+            transaction_category: 'transfer',
+            status: 'success'
         });
 
         res.json({ message: 'Bill paid successfully' });
@@ -181,17 +185,26 @@ router.post('/deposit', async (req, res) => {
     if (!acc) {
       return res.status(404).json({ error: 'Account not found' });
     }
+    
+    const cashAcc = await Account.findOne({
+      where: { acc_no: 'CASH000' }
+    });
 
-    // update balance
+    if (!cashAcc) {
+      return res.status(500).json({ error: 'Cash account not found' });
+    }
+
     acc.balance = parseFloat(acc.balance) + amount;
     await acc.save();
-
+    
     await Transaction.create({
-      from_account_id: acc.id,
+      from_account_id: cashAcc.id,
       to_account_id: acc.id,
       amount,
       transaction_type: 'Credit',
-      description: 'Deposit'
+      transaction_category: 'deposit',  
+      description: 'Cash Deposit',
+      status: 'success'                 
     });
 
     res.json({ message: 'Deposit successful' });

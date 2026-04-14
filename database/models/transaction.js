@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+
+    transaction_category: {
+      type: DataTypes.STRING
     }
 
   }, {});

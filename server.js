@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const { sequelize } = require('./database/models');
 const path = require('path');
 
+sequelize.sync({ alter: true });
+
 const app = express();
 app.use((req, res, next) => {
   res.setHeader(

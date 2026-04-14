@@ -164,12 +164,13 @@ function displayTransactions(transactions) {
     tbody.innerHTML = '';
     transactions.forEach(tx => {
         const row = document.createElement('tr');
-        const type = tx.transaction_type || tx.type;
+        const category = tx.transaction_category || 'other';
+        const type = tx.transaction_type;
         const amount = tx.amount;
         row.innerHTML = `
             <td>${new Date(tx.timestamp).toLocaleDateString()}</td>
             <td>${tx.description || '—'}</td>
-            <td>${type}</td>
+            <td>${category}</td>
             <td class="${type === 'Credit' ? 'transaction-credit' : 'transaction-debit'}">
                 ${type === 'Credit' ? '+' : '-'}$${Math.abs(amount).toFixed(2)}
             </td>
