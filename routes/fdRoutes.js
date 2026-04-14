@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { FixedDeposit, Account, AccountHolder, Customer, Transaction } = require('../database/models');
-
+const { FixedDeposit, Account, Customer, Transaction } = require('../database/models');
 
 router.get('/', async (req, res) => {
   try {
@@ -10,31 +9,26 @@ router.get('/', async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const userId = req.session.user.id;
-
     const customer = await Customer.findOne({
-      where: { user_id: userId }
+      where: { user_id: req.session.user.id }
     });
+
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found' });
+    }
 
     const fds = await FixedDeposit.findAll({
       where: { customer_id: customer.id },
       order: [['createdAt', 'DESC']]
     });
 
-    console.log("CUSTOMER:", customer);
-    console.log("FDS:", fds);
-
     res.json(fds);
-
-    console.log("CUSTOMER:", customer);
-    console.log("FDS:", fds);
 
   } catch (err) {
     console.error("FD FETCH ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });
-
 
 
 router.post('/create', async (req, res) => {
@@ -88,11 +82,13 @@ router.post('/create', async (req, res) => {
       status: 'active'
     });
 
+    // log transaction
     await Transaction.create({
       from_account_id: acc.id,
       to_account_id: acc.id,
       amount,
       transaction_type: 'Debit',
+      transaction_category: 'deposit',
       description: 'FD Created',
       status: 'success'
     });

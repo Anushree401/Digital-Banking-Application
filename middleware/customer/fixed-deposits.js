@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
 });
 
-
 async function loadFDData() {
     try {
         const res = await fetch('/api/fds', { credentials: 'include' });
@@ -26,26 +25,19 @@ async function loadFDData() {
     }
 }
 
-
 async function loadAccounts() {
     try {
         const res = await fetch('/api/dashboard', { credentials: 'include' });
 
         if (!res.ok) {
-            const text = await res.text();
-            console.error("ACCOUNT FETCH ERROR:", text);
+            console.error("Account fetch failed");
             return;
         }
 
         const data = await res.json();
-        console.log("ACCOUNTS:", data.accounts); 
-
         const select = document.getElementById('fdAccount');
 
-        if (!select) {
-            console.error("fdAccount dropdown not found");
-            return;
-        }
+        if (!select) return;
 
         select.innerHTML = '<option value="">Select Account</option>';
 
@@ -61,7 +53,6 @@ async function loadAccounts() {
     }
 }
 
-
 function displayFDs(fds) {
     const fdList = document.getElementById('fdList');
     fdList.innerHTML = '';
@@ -71,7 +62,9 @@ function displayFDs(fds) {
         return;
     }
 
-    fds.forEach(fd => {
+    fds.forEach(raw => {
+        const fd = raw.dataValues || raw;
+
         const div = document.createElement('div');
         div.className = "fd-card";
 
@@ -99,7 +92,6 @@ function displayFDs(fds) {
     });
 }
 
-
 async function createFD(accountId, amount, tenure) {
     try {
         const res = await fetch('/api/fds/create', {
@@ -113,20 +105,11 @@ async function createFD(accountId, amount, tenure) {
             })
         });
 
-        const text = await res.text();
-
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch {
-            console.error("NOT JSON:", text);
-            alert("Server error");
-            return;
-        }
+        const data = await res.json();
 
         if (res.ok) {
             alert("FD Created");
-            loadFDData();  
+            loadFDData();
         } else {
             alert(data.error);
         }
@@ -136,14 +119,9 @@ async function createFD(accountId, amount, tenure) {
     }
 }
 
-
 function setupEventListeners() {
-    const btn = document.getElementById('openFdBtn');
 
-    if (!btn) {
-        console.error("openFdBtn not found");
-        return;
-    }
+    const btn = document.getElementById('openFdBtn');
 
     btn.addEventListener('click', () => {
 
@@ -161,19 +139,8 @@ function setupEventListeners() {
 
     const logoutBtn = document.getElementById('logoutBtn');
 
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', async () => {
-            try {
-                await fetch('/auth/logout', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-
-                window.location.href = '/auth/login';
-
-            } catch (err) {
-                console.error("Logout error:", err);
-            }
-        });
-    }
+    logoutBtn.addEventListener('click', async () => {
+        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+        window.location.href = '../shared/login.html';
+    });
 }

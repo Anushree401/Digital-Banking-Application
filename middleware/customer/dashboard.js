@@ -164,7 +164,7 @@ function displayTransactions(transactions) {
     tbody.innerHTML = '';
     transactions.forEach(tx => {
         const row = document.createElement('tr');
-        const category = tx.transaction_category || 'other';
+        const category = tx.transaction_category || tx.transaction_type || 'other';
         const type = tx.transaction_type;
         const amount = tx.amount;
         row.innerHTML = `
@@ -172,7 +172,7 @@ function displayTransactions(transactions) {
             <td>${tx.description || '—'}</td>
             <td>${category}</td>
             <td class="${type === 'Credit' ? 'transaction-credit' : 'transaction-debit'}">
-                ${type === 'Credit' ? '+' : '-'}$${Math.abs(amount).toFixed(2)}
+                ${type === 'Credit' ? '+' : '-'}₹${Math.abs(amount).toFixed(2)}
             </td>
         `;
         tbody.appendChild(row);
