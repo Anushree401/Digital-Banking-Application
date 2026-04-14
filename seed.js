@@ -109,6 +109,14 @@ async function seed() {
       opened_at: new Date()
     });
 
+    const billerAccount = await Account.create({
+      acc_no: 'BILLER000',
+      acc_type: 'system',
+      balance: 0,
+      status: 'active',
+      opened_at: new Date()
+    });
+
     await AccountHolder.create({
       account_id: account2.id,
       customer_id: customer.id,

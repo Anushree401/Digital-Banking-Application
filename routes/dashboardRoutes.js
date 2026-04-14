@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     const customer = await Customer.findOne({
       where: { user_id: userId }
     });
-
+    console.log("CUSTOMER:", customer?.id);
     if (!customer) {
       return res.status(404).json({ error: 'Customer not found' });
     }
@@ -23,14 +23,14 @@ router.get('/', async (req, res) => {
     const accountHolders = await AccountHolder.findAll({
       where: { customer_id: customer.id }
     });
-
+    console.log("ACCOUNT HOLDERS:", accountHolders);
     const accountIds = accountHolders.map(ah => ah.account_id);
-
+    console.log("ACCOUNT IDS:", accountIds);
     // Get user's accounts
     const accounts = await Account.findAll({
       where: { id: accountIds }
     });
-
+    console.log("ACCOUNTS:", accounts);
     // Get user's transactions
     const transactions = await Transaction.findAll({
       where: {
@@ -59,7 +59,8 @@ router.get('/', async (req, res) => {
       monthlyIncome: 0,
       monthlyExpenses: 0,
       activeLoans: loans,
-      transactions
+      transactions,
+      accounts   
     });
 
   } catch (err) {

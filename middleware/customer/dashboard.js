@@ -1,3 +1,5 @@
+let mode = "transfer";
+
 document.addEventListener('DOMContentLoaded', function () {
 
     displayCurrentDate();
@@ -11,50 +13,64 @@ document.addEventListener('DOMContentLoaded', function () {
             transferBtn.disabled = true;
             transferBtn.textContent = "Processing...";
             const fromAccount = document.getElementById('fromAccount').value;
-            const toAccount = document.getElementById('toAccount').value;
+            const toAccount = mode === "bill"
+                ? document.getElementById('billerSelect')?.value
+                : document.getElementById('toAccount').value;
             const amount = parseFloat(document.getElementById('amount').value);
             if (!fromAccount || !toAccount || !amount) {
                 alert('Please fill all fields');
                 transferBtn.disabled = false;
-                transferBtn.textContent = "Send Money";
+                transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
                 return;
             }
             if (fromAccount === toAccount) {
                 alert("Cannot transfer to same account");
                 transferBtn.disabled = false;
-                transferBtn.textContent = "Send Money";
+                transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
                 return;
             }
             if (amount <= 0) {
                 alert("Amount must be greater than 0");
                 transferBtn.disabled = false;
-                transferBtn.textContent = "Send Money";
+                transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
                 return;
             }
             try {
-                const res = await fetch('/api/transactions/transfer', {
+                const endpoint = mode === "bill"
+                    ? '/api/transactions/bill'
+                    : '/api/transactions/transfer';
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ fromAccount, toAccount, amount })
                 });
-                const data = await res.json();
+                const text = await res.text();
+                console.log("RAW RESPONSE:", text);
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error("NOT JSON:", text);
+                    alert("Server error");
+                    return;
+                }
                 if (res.ok) {
-                    alert('Transfer successful');
+                    alert(mode === "bill" ? "Bill paid successfully" : "Transfer successful");
                     // reset button
                     transferBtn.disabled = false;
-                    transferBtn.textContent = "Send Money";
+                    transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
                     location.reload();
                 } else {
                     alert(data.error || 'Transfer failed');
                     transferBtn.disabled = false;
-                    transferBtn.textContent = "Send Money";
+                    transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
                 }
             } catch (err) {
                 console.error(err);
                 alert('Something went wrong');
                 transferBtn.disabled = false;
-                transferBtn.textContent = "Send Money";
+                transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
             }
 
         });
@@ -107,19 +123,29 @@ async function loadDashboardData() {
 function displayAccounts(accounts) {
     const accountsList = document.getElementById('accountsList');
     accountsList.innerHTML = '';
-
+    const fromSelect = document.getElementById('fromAccount');
+    if (fromSelect) {
+        fromSelect.innerHTML = '';
+    }
     accounts.forEach(account => {
+        if (fromSelect) {
+            const option = document.createElement('option');
+            option.value = account.id;
+            option.textContent = `${account.acc_type} (${account.acc_no})`;
+            fromSelect.appendChild(option);
+        }
         const accountItem = document.createElement('div');
         accountItem.className = 'account-item';
         accountItem.innerHTML = `
             <div class="account-info">
-                <h4>${account.name}</h4>
-                <p class="account-number">${account.number}</p>
+                <h4>${account.acc_type}</h4>
+                <p class="account-number">${account.acc_no}</p>
             </div>
             <div class="account-balance">$${account.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</div>
         `;
         accountsList.appendChild(accountItem);
     });
+    console.log("Accounts:", accounts);
 }
 
 function displayTransactions(transactions) {
@@ -165,22 +191,20 @@ function setupEventListeners() {
         window.location.href = '../shared/login.html';
     });
 
-    // document.getElementById('transferBtn').addEventListener('click', function() {
-    //     const section = document.querySelector('.transfer-section');
-    //     if (section.style.display === 'block') {
-    //         section.style.display = 'none';
-    //     } else {
-    //         section.style.display = 'block';
-    //         section.scrollIntoView({ behavior: 'smooth' });
-    //     }
-    // });
-
     document.getElementById('transferBtn').addEventListener('click', function() {
+        mode = "transfer";
         const section = document.querySelector('.transfer-section');
+        const input = document.getElementById('toAccount');
+        const dropdown = document.getElementById('billerSelect');
+        if (section.style.display === 'block') {
+            section.style.display = 'none';
+            return;
+        }
         section.style.display = 'block';
-        section.scrollIntoView({
-            behavior: 'smooth'
-        });
+        section.scrollIntoView({ behavior: 'smooth' });
+        input.style.display = 'block';
+        dropdown.style.display = 'none';
+        document.querySelector('.transfer-section h3').textContent = "Transfer Money";
     });
 
     // document.getElementById('payBillBtn').addEventListener('click', async function() {
@@ -215,9 +239,19 @@ function setupEventListeners() {
     //     }
     // });
     document.getElementById('payBillBtn').addEventListener('click', function() {
+        mode = "bill";
         const section = document.querySelector('.transfer-section');
-        section.style.display = 'block';
-        section.scrollIntoView({ behavior: 'smooth' });
+        if (section.style.display === 'block') {
+            section.style.display = 'none';
+        } else {
+            section.style.display = 'block';
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+        document.querySelector('.transfer-section h3').textContent = "Pay Bill";
+        const input = document.getElementById('toAccount');
+        const dropdown = document.getElementById('billerSelect');
+        input.style.display = 'none';
+        dropdown.style.display = 'block';
     });
 
     document.getElementById('depositBtn').addEventListener('click', async function() {

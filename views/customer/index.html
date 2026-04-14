@@ -105,8 +105,16 @@
             <section class="transfer-section" style="display: none;">
                 <h3>Transfer Money</h3>
                 <div class="transfer-box">
-                    <select id="fromAccount" placeholder="From Account No"></select>
+                    <select id="fromAccount"></select>
                     <input type="text" id="toAccount" placeholder="To Account No">
+                    <select id="billerSelect" style="display: none;">
+                        <option value="">Select Biller</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Water">Water</option>
+                        <option value="Internet">Internet</option>
+                        <option value="Netflix">Netflix</option>
+                        <option value="Mobile">Mobile Recharge</option>
+                    </select>
                     <input type="number" id="amount" placeholder="Amount">
                     <button id="transferSubmit">Send Money</button>
                 </div>
