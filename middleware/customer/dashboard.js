@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? document.getElementById('billerSelect')?.value
                 : document.getElementById('toAccount').value;
             const amount = parseFloat(document.getElementById('amount').value);
-            if (!fromAccount || !toAccount || !amount) {
+            if (!fromAccount || !amount || (mode !== "deposit" && !toAccount)) {
                 alert('Please fill all fields');
                 transferBtn.disabled = false;
                 transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
@@ -36,9 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             try {
-                const endpoint = mode === "bill"
-                    ? '/api/transactions/bill'
-                    : '/api/transactions/transfer';
+                let endpoint;
+                if (mode === "bill") {
+                    endpoint = '/api/transactions/bill';
+                } else if (mode === "deposit") {
+                    endpoint = '/api/transactions/deposit';
+                } else {
+                    endpoint = '/api/transactions/transfer';
+                }
                 const res = await fetch(endpoint, {
                     method: 'POST',
                     credentials: 'include',
@@ -56,7 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     return;
                 }
                 if (res.ok) {
-                    alert(mode === "bill" ? "Bill paid successfully" : "Transfer successful");
+                    alert(
+                        mode === "bill"
+                            ? "Bill paid successfully"
+                            : mode === "deposit"
+                            ? "Deposit successful"
+                            : "Transfer successful"
+                    );
                     // reset button
                     transferBtn.disabled = false;
                     transferBtn.textContent = mode === "bill" ? "Pay Bill" : "Send Money";
@@ -254,34 +265,29 @@ function setupEventListeners() {
         dropdown.style.display = 'block';
     });
 
-    document.getElementById('depositBtn').addEventListener('click', async function() {
-        const amount = prompt("Enter deposit amount:");
+    document.getElementById('depositBtn').addEventListener('click', function() {
+        mode = "deposit";
 
-        if (!amount || amount <= 0) {
-            alert("Invalid amount");
+        const section = document.querySelector('.transfer-section');
+        const input = document.getElementById('toAccount');
+        const dropdown = document.getElementById('billerSelect');
+
+        if (section.style.display === 'block') {
+            section.style.display = 'none';
             return;
         }
 
-        try {
-            const res = await fetch('/api/transactions/deposit', {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: Number(amount) })
-            });
+        section.style.display = 'block';
+        section.scrollIntoView({ behavior: 'smooth' });
 
-            const data = await res.json();
+        // Hide unnecessary fields
+        input.style.display = 'none';
+        dropdown.style.display = 'none';
 
-            if (res.ok) {
-                alert("Deposit successful");
-                location.reload();
-            } else {
-                alert(data.error);
-            }
+        document.querySelector('.transfer-section h3').textContent = "Deposit Money";
 
-        } catch (err) {
-            alert("Deposit failed");
-        }
+        const btn = document.getElementById('transferSubmit');
+        btn.textContent = "Deposit";
     });
 
     document.getElementById('applyLoanBtn').addEventListener('click', function() {

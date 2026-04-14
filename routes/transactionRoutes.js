@@ -164,4 +164,42 @@ router.post('/bill', async (req, res) => {
     }
 });
 
+router.post('/deposit', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const { fromAccount, amount } = req.body;
+
+    if (!fromAccount || !amount) {
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+
+    const acc = await Account.findByPk(fromAccount);
+
+    if (!acc) {
+      return res.status(404).json({ error: 'Account not found' });
+    }
+
+    // update balance
+    acc.balance = parseFloat(acc.balance) + amount;
+    await acc.save();
+
+    await Transaction.create({
+      from_account_id: acc.id,
+      to_account_id: acc.id,
+      amount,
+      transaction_type: 'Credit',
+      description: 'Deposit'
+    });
+
+    res.json({ message: 'Deposit successful' });
+
+  } catch (err) {
+    console.error("DEPOSIT ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
