@@ -1,7 +1,65 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+
     displayCurrentDate();
     loadDashboardData();
     setupEventListeners();
+
+    const transferBtn = document.getElementById('transferSubmit');
+
+    if (transferBtn) {
+        transferBtn.addEventListener('click', async () => {
+            transferBtn.disabled = true;
+            transferBtn.textContent = "Processing...";
+            const fromAccount = document.getElementById('fromAccount').value;
+            const toAccount = document.getElementById('toAccount').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            if (!fromAccount || !toAccount || !amount) {
+                alert('Please fill all fields');
+                transferBtn.disabled = false;
+                transferBtn.textContent = "Send Money";
+                return;
+            }
+            if (fromAccount === toAccount) {
+                alert("Cannot transfer to same account");
+                transferBtn.disabled = false;
+                transferBtn.textContent = "Send Money";
+                return;
+            }
+            if (amount <= 0) {
+                alert("Amount must be greater than 0");
+                transferBtn.disabled = false;
+                transferBtn.textContent = "Send Money";
+                return;
+            }
+            try {
+                const res = await fetch('/api/transactions/transfer', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fromAccount, toAccount, amount })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Transfer successful');
+                    // reset button
+                    transferBtn.disabled = false;
+                    transferBtn.textContent = "Send Money";
+                    location.reload();
+                } else {
+                    alert(data.error || 'Transfer failed');
+                    transferBtn.disabled = false;
+                    transferBtn.textContent = "Send Money";
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Something went wrong');
+                transferBtn.disabled = false;
+                transferBtn.textContent = "Send Money";
+            }
+
+        });
+    }
+
 });
 
 function displayCurrentDate() {
@@ -107,42 +165,59 @@ function setupEventListeners() {
         window.location.href = '../shared/login.html';
     });
 
+    // document.getElementById('transferBtn').addEventListener('click', function() {
+    //     const section = document.querySelector('.transfer-section');
+    //     if (section.style.display === 'block') {
+    //         section.style.display = 'none';
+    //     } else {
+    //         section.style.display = 'block';
+    //         section.scrollIntoView({ behavior: 'smooth' });
+    //     }
+    // });
+
     document.getElementById('transferBtn').addEventListener('click', function() {
-        document.querySelector('.transfer-section').scrollIntoView({
+        const section = document.querySelector('.transfer-section');
+        section.style.display = 'block';
+        section.scrollIntoView({
             behavior: 'smooth'
         });
     });
 
-    document.getElementById('payBillBtn').addEventListener('click', async function() {
-        const recipientAccountNumber = document.getElementById('recipientAccountNumber').value;
-        const amount = Number(document.getElementById('transferAmount').value);
+    // document.getElementById('payBillBtn').addEventListener('click', async function() {
+    //     const recipientAccountNumber = document.getElementById('recipientAccountNumber').value;
+    //     const amount = Number(document.getElementById('transferAmount').value);
         
-        if (recipientAccountNumber && amount > 0) {
-            try {
-                const response = await fetch('../api/transactions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        recipientAccountNumber,
-                        amount,
-                        type: 'Transfer'
-                    })
-                });
-                const data = await response.json();
-                if (data.success) {
-                    alert('Transfer successful');
-                    window.location.reload();
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                alert('Transfer failed');
-            }
-        } else {
-            alert('Please fill in all fields');
-        }
+    //     if (recipientAccountNumber && amount > 0) {
+    //         try {
+    //             const response = await fetch('../api/transactions', {
+    //                 method: 'POST',
+    //                 headers: {
+    //                     'Content-Type': 'application/json'
+    //                 },
+    //                 body: JSON.stringify({
+    //                     recipientAccountNumber,
+    //                     amount,
+    //                     type: 'Transfer'
+    //                 })
+    //             });
+    //             const data = await response.json();
+    //             if (data.success) {
+    //                 alert('Transfer successful');
+    //                 window.location.reload();
+    //             } else {
+    //                 alert(data.message);
+    //             }
+    //         } catch (error) {
+    //             alert('Transfer failed');
+    //         }
+    //     } else {
+    //         alert('Please fill in all fields');
+    //     }
+    // });
+    document.getElementById('payBillBtn').addEventListener('click', function() {
+        const section = document.querySelector('.transfer-section');
+        section.style.display = 'block';
+        section.scrollIntoView({ behavior: 'smooth' });
     });
 
     document.getElementById('depositBtn').addEventListener('click', async function() {
@@ -179,44 +254,3 @@ function setupEventListeners() {
         window.location.href = 'loans.html';
     });
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const transferBtn = document.getElementById('transferSubmit');
-
-    if (transferBtn) {
-        transferBtn.addEventListener('click', async () => {
-
-            const fromAccount = document.getElementById('fromAccount').value;
-            const toAccount = document.getElementById('toAccount').value;
-            const amount = parseFloat(document.getElementById('amount').value);
-
-            if (!fromAccount || !toAccount || !amount) {
-                alert('Please fill all fields');
-                return;
-            }
-
-            try {
-                const res = await fetch('/api/transactions/transfer', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ fromAccount, toAccount, amount })
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    alert('Transfer successful');
-                    location.reload();
-                } else {
-                    alert('Error: ' + data.error);
-                }
-
-            } catch (err) {
-                console.error(err);
-                alert('Something went wrong');
-            }
-
-        });
-    }
-});

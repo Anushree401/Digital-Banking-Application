@@ -255,6 +255,10 @@ body {
     font-size: 1.25rem;
 }
 
+.transfer-section {
+    display: none;
+}
+
 .accounts-list {
     display: grid;
     gap: 12px;
