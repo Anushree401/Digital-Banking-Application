@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    initializeCommonFeatures(); 
     loadFDData();
     loadAccounts();
     setupEventListeners();
