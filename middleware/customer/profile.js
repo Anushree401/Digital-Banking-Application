@@ -3,18 +3,26 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
 });
 
-function loadProfileData() {
-    const mockProfile = {
-        fullName: 'Sarah Chen',
-        email: 'sarah.chen@email.com',
-        phone: '+1-415-238-5972',
-        address: '847 Oak Avenue, San Francisco, CA 94102'
-    };
+async function loadProfileData() {
+    try {
+        const res = await fetch('/api/profile', {
+            credentials: 'include'
+        });
+        if (res.status === 401) {
+            window.location.href = '/auth/login';
+            return;
+        }
+        const user = await res.json();
+        document.getElementById('fullName').value =
+            (user.fname || '') + ' ' + (user.lname || '');
+        document.getElementById('email').value = user.email || '';
+        document.getElementById('phone').value = user.phone || '';
+        document.getElementById('address').value = user.address || '';
 
-    document.getElementById('fullName').value = mockProfile.fullName;
-    document.getElementById('email').value = mockProfile.email;
-    document.getElementById('phone').value = mockProfile.phone;
-    document.getElementById('address').value = mockProfile.address;
+    } catch (err) {
+        console.error(err);
+        alert('Error loading profile');
+    }
 }
 
 function setupEventListeners() {
@@ -39,7 +47,7 @@ function setupEventListeners() {
         window.location.href = '../shared/login.html';
     });
 
-    document.getElementById('profileForm').addEventListener('submit', function(e) {
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const fullName = document.getElementById('fullName').value;
@@ -52,10 +60,35 @@ function setupEventListeners() {
             return;
         }
 
-        alert('Profile updated successfully!');
+        try {
+            const res = await fetch('/api/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    fname: fullName.split(' ')[0],
+                    lname: fullName.split(' ').slice(1).join(' '),
+                    email,
+                    phone,
+                    address
+                })
+            });
+
+            if (!res.ok) {
+                throw new Error('Update failed');
+            }
+
+            alert('Profile updated successfully!');
+
+        } catch (err) {
+            console.error(err);
+            alert('Error updating profile');
+        }
     });
 
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+    document.getElementById('passwordForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const currentPassword = document.getElementById('currentPassword').value;
@@ -77,7 +110,32 @@ function setupEventListeners() {
             return;
         }
 
-        alert('Password changed successfully!');
+        try {
+            const res = await fetch('/api/profile/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    currentPassword,
+                    newPassword
+                })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                return alert(data.error || 'Error changing password');
+            }
+
+            alert('Password changed successfully!');
+            document.getElementById('passwordForm').reset();
+
+        } catch (err) {
+            console.error(err);
+            alert('Server error');
+        }
         document.getElementById('passwordForm').reset();
     });
 }
