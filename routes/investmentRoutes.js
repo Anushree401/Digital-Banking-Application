@@ -146,7 +146,8 @@ router.post('/', async (req, res) => {
 
     if (investment) {
         // update existing portfolio
-        investment.investment_balance = Number(investment.investment_balance) + amount;
+        investment.investment_balance =
+        Number(investment.investment_balance || 0) + Number(amount);
         await investment.save();
     } else {
         // create first time
@@ -222,12 +223,11 @@ router.post('/:id/withdraw', async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const investmentId = req.params.id;
     const amount = Number(req.body.amount);
     const userId = req.session.user.id;
 
     const investment = await Investor.findOne({
-      where: { id: investmentId, user_id: userId }
+      where: { user_id: userId }
     });
 
     if (!investment) {

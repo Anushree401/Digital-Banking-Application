@@ -1,6 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
-	loadInvestments();
-});
+document.addEventListener('DOMContentLoaded', loadInvestments);
+
+async function loadInvestments() {
+    const res = await fetch('/api/investments', {
+        credentials: 'include'
+    });
+
+    const data = await res.json();
+
+    const tbody = document.getElementById('investmentsBody');
+    tbody.innerHTML = '';
+
+    if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="4">No investments</td></tr>`;
+        return;
+    }
+
+    data.forEach(inv => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${inv.name}</td>
+                <td>₹${inv.amount}</td>
+                <td>${inv.returns}%</td>
+                <td>${inv.status}</td>
+            </tr>
+        `;
+    });
+}
 
 async function loadInvestments() {
 	const tbody = document.getElementById('investmentsBody');

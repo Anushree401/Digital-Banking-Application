@@ -1,6 +1,23 @@
-document.addEventListener('DOMContentLoaded', function() {
-	loadInvestorDashboard();
-});
+document.addEventListener('DOMContentLoaded', loadDashboard);
+
+async function loadDashboard() {
+    const res = await fetch('/api/investments', {
+        credentials: 'include'
+    });
+
+    const data = await res.json();
+
+    let total = 0;
+
+    data.forEach(inv => {
+        total += Number(inv.amount);
+    });
+
+    document.getElementById('invTotalDeployed').textContent = `₹${total}`;
+    document.getElementById('invActiveDeals').textContent = data.length;
+    document.getElementById('invExpectedYield').textContent = '10%';
+    document.getElementById('invMonthPayout').textContent = '₹0';
+}
 
 async function loadInvestorDashboard() {
 	try {
@@ -75,4 +92,12 @@ function setText(id, value) {
 
 function formatCurrency(value) {
 	return '$' + Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function setupEventListeners() {
+	document.getElementById('logoutBtn').addEventListener('click', async function() {
+        // alert('Logout functionality will be implemented');
+        await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+        window.location.href = '../shared/login.html';
+    });
 }
