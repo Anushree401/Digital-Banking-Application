@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 
 const { Card, AccountHolder, Customer, Account, User } = require('../database/models');
 const { authorize } = require('../middleware/roleMiddleware');
+const { Transaction } = require('../database/models');
+const { Op } = require('sequelize');
 
 /**
  * @swagger
@@ -41,8 +43,7 @@ router.get('/', async (req, res) => {
     // get cards linked to those accounts
     const cards = await Card.findAll({
       where: {
-        account_id: accountIds,
-        status: 'active'
+        account_id: accountIds
       }
     });
 
@@ -56,16 +57,32 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /api/cards:
- *   get:
- *     summary: Get user's active cards
+ * /api/cards/apply:
+ *   post:
+ *     summary: Apply for a card
  *     tags:
  *       - Cards
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cardType:
+ *                 type: string
+ *                 enum: ['credit', 'debit']
+ *               accountId:
+ *                 type: integer
  *     responses:
  *       200:
- *         description: List of active cards
+ *         description: Card application submitted
+ *       400:
+ *         description: Missing fields
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Unauthorized account access
  */
 router.post('/apply', async (req, res) => {
   try {
@@ -77,6 +94,38 @@ router.post('/apply', async (req, res) => {
 
     if (!cardType || !accountId) {
       return res.status(400).json({ error: 'Missing fields' });
+    }
+
+    const customer = await Customer.findOne({
+      where: { user_id: req.session.user.id }
+    });
+
+    const holder = await AccountHolder.findOne({
+      where: {
+        account_id: accountId,
+        customer_id: customer.id
+      }
+    });
+
+    if (!holder) {
+      return res.status(403).json({ error: 'Unauthorized account access' });
+    }
+
+    const existing = await Card.findOne({
+      where: {
+        account_id: accountId,
+        status: {
+          [Op.in]: ['pending', 'active']
+        }
+      }
+    });
+
+    if (existing) {
+      return res.status(400).json({ 
+        error: 'Card already exists',
+        accountId,
+        status: existing.status
+      });
     }
 
     // generate fake card number
@@ -97,7 +146,11 @@ router.post('/apply', async (req, res) => {
       cvv_hash: cvvHash 
     });
 
-    res.json(newCard);
+    res.json({
+      message: 'Card application submitted',
+      card: newCard,
+      cvv
+    });
 
   } catch (err) {
     console.error("CARD APPLY ERROR:", err);
@@ -138,6 +191,15 @@ router.put('/approve/:id', authorize('loan_officer'), async (req, res) => {
 
     card.status = 'active';
     await card.save();
+
+    await Transaction.create({
+      from_account_id: card.account_id,
+      to_account_id: card.account_id,
+      amount: 0,
+      transaction_type: 'Debit',
+      description: 'Card Issued',
+      status: 'success'
+    });
 
     res.json({ message: 'Card approved' });
 
@@ -256,6 +318,207 @@ router.get('/pending', authorize('loan_officer'), async (req, res) => {
     });
 
     res.json(mapped);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/cards/block/{id}:
+ *   put:
+ *     summary: Block a card
+ *     tags:
+ *       - Cards
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Card blocked
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Card not found
+ */
+router.put('/block/:id', async (req, res) => {
+  try {
+    const card = await Card.findByPk(req.params.id);
+
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found' });
+    }
+
+    card.status = 'blocked';
+    await card.save();
+
+    res.json({ message: 'Card blocked' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/cards/set-pin/{id}:
+ *   put:
+ *     summary: Set a card's PIN
+ *     tags:
+ *       - Cards
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               pin:
+ *                 type: string
+ *                 example: 1234
+ *     responses:
+ *       200:
+ *         description: PIN set successfully
+ *       400:
+ *         description: Invalid PIN
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Card not found
+ */
+router.put('/set-pin/:id', async (req, res) => {
+  try {
+    const { pin } = req.body;
+
+    if (!pin || pin.length !== 4) {
+      return res.status(400).json({ error: 'PIN must be 4 digits' });
+    }
+
+    const card = await Card.findByPk(req.params.id);
+
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found' });
+    }
+
+    const bcrypt = require('bcrypt');
+    const pinHash = await bcrypt.hash(pin, 10);
+
+    card.pin_hash = pinHash;
+    await card.save();
+
+    res.json({ message: 'PIN set successfully' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/cards/limit/{id}:
+ *   put:
+ *     summary: Set card spending limit
+ *     tags:
+ *       - Cards
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               limit:
+ *                 type: integer
+ *                 example: 5000
+ *     responses:
+ *       200:
+ *         description: Card spending limit set successfully
+ *       400:
+ *         description: Invalid limit
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Card not found
+ * */
+router.put('/limit/:id', async (req, res) => {
+  try {
+    const { limit } = req.body;
+
+    if (!limit || limit <= 0) {
+      return res.status(400).json({ error: 'Invalid limit' });
+    }
+
+    const card = await Card.findByPk(req.params.id);
+
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found' });
+    }
+
+    card.limit = limit;
+    await card.save();
+
+    res.json({ message: 'Limit updated' });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/cards/{id}/unblock:
+ *   put:
+ *     summary: Unblock a card
+ *     tags:
+ *       - Cards
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Card unblocked
+ *       400:
+ *         description: Card is not blocked
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Card not found
+ */
+router.put('/unblock/:id', async (req, res) => {
+  try {
+    const card = await Card.findByPk(req.params.id);
+
+    if (!card) {
+      return res.status(404).json({ error: 'Card not found' });
+    }
+
+    if (card.status !== 'blocked') {
+      return res.status(400).json({ error: 'Card is not blocked' });
+    }
+
+    card.status = 'active';
+    await card.save();
+
+    res.json({ message: 'Card unblocked' });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

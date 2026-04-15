@@ -45,8 +45,22 @@ async function loadOfficerDashboard() {
 		const pendingCards = cardsRes.ok ? await cardsRes.json() : [];
 		const customers = customersRes.ok ? await customersRes.json() : [];
 
-		const pendingLoans = loans.filter(loan => String(loan.status || '').toLowerCase() === 'pending');
-		const approvedLoans = loans.filter(loan => ['approved', 'active'].includes(String(loan.status || '').toLowerCase()));
+		const filter = document.getElementById('loanFilter')?.value;
+		let filteredLoans = loans;
+
+		if (filter) {
+		filteredLoans = loans.filter(
+			l => String(l.status || '').toLowerCase() === filter
+		);
+		}
+
+		const pendingLoans = filteredLoans.filter(
+		loan => String(loan.status || '').toLowerCase() === 'pending'
+		);
+
+		const approvedLoans = filteredLoans.filter(
+		loan => ['approved', 'active'].includes(String(loan.status || '').toLowerCase())
+		);
 
 		const officerName = fullName(profile);
 		setText('userName', officerName);
@@ -80,6 +94,7 @@ function renderLoanRows(tbody, loans) {
 
 	loans.forEach(loan => {
 		const row = document.createElement('tr');
+		row.onclick = () => showLoanDetails(loan);
 		row.innerHTML = `
 			<td>LN${String(loan.id).padStart(6, '0')}</td>
 			<td>${loan.customer_name || `Customer #${loan.customer_id}`}</td>
@@ -87,6 +102,10 @@ function renderLoanRows(tbody, loans) {
 			<td>${formatCurrency(loan.principal_amount)}</td>
 			<td><span class="status-badge status-${String(loan.status || 'pending').toLowerCase()}">${loan.status || 'pending'}</span></td>
 			<td>${formatDate(loan.applied_at)}</td>
+			<td>
+			<button onclick="event.stopPropagation(); approveLoan(${loan.id})">Approve</button>
+			<button onclick="event.stopPropagation(); rejectLoan(${loan.id})">Reject</button>
+			</td>
 		`;
 		tbody.appendChild(row);
 	});
@@ -167,8 +186,65 @@ function setupEventListeners() {
 
 	const logoutBtn = document.getElementById('logoutBtn');
 	if (logoutBtn) {
-		logoutBtn.addEventListener('click', function() {
-			window.location.href = '/shared/login.html';
+		logoutBtn.addEventListener('click', async function() {
+			await fetch('/auth/logout', {
+				method: 'POST',
+				credentials: 'include'
+			});
+
+			window.location.href = '/auth/login';
 		});
 	}
+
+	async function approveLoan(id) {
+		try {
+			const res = await fetch(`/api/loans/approve/${id}`, {
+			method: 'PUT',
+			credentials: 'include'
+			});
+
+			if (!res.ok) throw new Error();
+
+			alert('Loan approved');
+			loadOfficerDashboard();
+
+		} catch {
+			alert('Error approving loan');
+		}
+		}
+
+		async function rejectLoan(id) {
+		try {
+			const res = await fetch(`/api/loans/reject/${id}`, {
+			method: 'PUT',
+			credentials: 'include'
+			});
+
+			if (!res.ok) throw new Error();
+
+			alert('Loan rejected');
+			loadOfficerDashboard();
+
+		} catch {
+			alert('Error rejecting loan');
+		}
+		}
+
+		const filter = document.getElementById('loanFilter');
+
+		if (filter) {
+		filter.addEventListener('change', loadOfficerDashboard);
+		}
+}
+
+function showLoanDetails(loan) {
+  alert(`
+Loan ID: ${loan.id}
+Customer: ${loan.customer_name || loan.customer_id}
+Type: ${loan.loan_type}
+Amount: ₹${loan.principal_amount}
+Interest: ${loan.interest_rate}%
+Tenure: ${loan.tenure_months} months
+Status: ${loan.status}
+  `);
 }

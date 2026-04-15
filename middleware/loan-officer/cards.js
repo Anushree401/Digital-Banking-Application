@@ -20,6 +20,11 @@ async function loadPendingCards() {
 
         const data = await res.json();
 
+        if (!res.ok) {
+            alert(data.error || 'Failed to load cards');
+            return;
+        }
+
         displayPendingCards(data);
 
     } catch (err) {
@@ -107,9 +112,12 @@ function setupEventListeners() {
     }
 
     const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            window.location.href = '/shared/login.html';
+    logoutBtn.addEventListener('click', async function() {
+        await fetch('/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
         });
-    }
+
+        window.location.href = '/auth/login';
+    });
 }

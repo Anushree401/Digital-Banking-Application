@@ -201,6 +201,16 @@ body {
     margin-bottom: 20px;
 }
 
+.btn-danger {
+    background: red;
+    color: white;
+}
+
+.btn-success {
+    background: green;
+    color: white;
+}
+
 .eyebrow {
     text-transform: uppercase;
     letter-spacing: 0.12em;

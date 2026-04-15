@@ -47,11 +47,14 @@ router.get('/', async (req, res) => {
         const principal = Number(loan.principal_amount);
         const rate = Number(loan.interest_rate) / 100 / 12;
         const tenure = Number(loan.tenure_months);
-        
-        let emiAmount = loan.emi_amount;
-        if (!emiAmount) {
-          emiAmount = rate > 0 
-            ? (principal * rate * Math.pow(1 + rate, tenure)) / (Math.pow(1 + rate, tenure) - 1)
+
+        // FIXED EMI handling
+        let emiAmount = Number(loan.emi_amount);
+
+        if (!emiAmount || isNaN(emiAmount)) {
+          emiAmount = rate > 0
+            ? (principal * rate * Math.pow(1 + rate, tenure)) /
+              (Math.pow(1 + rate, tenure) - 1)
             : (principal / tenure);
         }
 

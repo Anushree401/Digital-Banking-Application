@@ -42,6 +42,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: 'pending'
+    },
+
+    limit: {
+      type: DataTypes.DECIMAL,
+      defaultValue: 10000
+    },
+
+    pin_hash: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
 
   }, {});

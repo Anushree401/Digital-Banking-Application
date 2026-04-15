@@ -55,9 +55,9 @@
                 <h3>Card Actions</h3>
                 <div class="actions-grid">
                     <button class="action-btn" id="applyCardBtn">Apply for New Card</button>
-                    <button class="action-btn" id="blockCardBtn">Block Card</button>
-                    <button class="action-btn" id="setPinBtn">Set PIN</button>
-                    <button class="action-btn" id="cardLimitsBtn">Manage Limits</button>
+                    <!-- <button class="action-btn" id="blockCardBtn">Block Card</button> -->
+                    <!-- <button class="action-btn" id="setPinBtn">Set PIN</button>
+                    <button class="action-btn" id="cardLimitsBtn">Manage Limits</button> -->
                 </div>
             </section>
             <section class="accounts-overview">
@@ -75,7 +75,9 @@
 
                     <div class="form-group">
                         <label>Account ID</label>
-                        <input type="number" id="accountId" placeholder="Enter account ID">
+                        <select id="accountId">
+                            <option value="">Select Account</option>
+                        </select>
                     </div>
 
                     <button type="submit" class="action-btn">

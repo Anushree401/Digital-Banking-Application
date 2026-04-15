@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadCardsData();
+    loadAccounts();
     setupEventListeners();
 });
+
 
 async function loadCardsData() {
     try {
@@ -9,17 +11,16 @@ async function loadCardsData() {
             credentials: 'include'
         });
 
-        const data = await res.json();
-        // const text = await res.text();
-        // console.log("RAW RESPONSE:", text);
+        let data;
+        const text = await res.text();
 
-        // let data;
-        // try {
-        //     data = JSON.parse(text);
-        // } catch (e) {
-        //     console.error("NOT JSON RESPONSE");
-        //     return;
-        // }
+        try {
+            data = JSON.parse(text);
+        } catch {
+            console.error("NON-JSON RESPONSE:", text);
+            alert("Server error (check console)");
+            return;
+        }
 
         if (!res.ok) {
             alert(data.error);
@@ -33,6 +34,110 @@ async function loadCardsData() {
     }
 }
 
+window.blockCard = async function(cardId) {
+
+    if (!confirm("Block this card?")) return;
+
+    try {
+        const res = await fetch(`/api/cards/block/${cardId}`, {
+            method: 'PUT',
+            credentials: 'include'
+        });
+
+        let data;
+        const text = await res.text();
+
+        try {
+            data = JSON.parse(text);
+        } catch {
+            console.error("NON-JSON RESPONSE:", text);
+            alert("Server error (check console)");
+            return;
+        }
+
+        if (!res.ok) {
+            alert(data.error);
+            return;
+        }
+
+        alert("Card blocked");
+        loadCardsData();
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+window.unblockCard = async function(cardId) {
+
+    if (!confirm("Unblock this card?")) return;
+
+    try {
+        const res = await fetch(`/api/cards/unblock/${cardId}`, {
+            method: 'PUT',
+            credentials: 'include'
+        });
+
+        let data;
+        const text = await res.text();
+
+        try {
+            data = JSON.parse(text);
+        } catch {
+            console.error("NON-JSON RESPONSE:", text);
+            alert("Server error (check console)");
+            return;
+        }
+
+        if (!res.ok) {
+            alert(data.error);
+            return;
+        }
+
+        alert("Card unblocked");
+        loadCardsData();
+
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+window.setLimit = async function(cardId) {
+
+    const limit = prompt("Enter new limit:");
+
+    if (!limit) return;
+
+    try {
+        const res = await fetch(`/api/cards/limit/${cardId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ limit: Number(limit) })
+        });
+
+        let data;
+        const text = await res.text();
+
+        try {
+            data = JSON.parse(text);
+        } catch {
+            console.error("NON-JSON RESPONSE:", text);
+            return;
+        }
+
+        if (!res.ok) {
+            alert(data.error);
+            return;
+        }
+
+        alert("Limit updated");
+
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 function displayCards(cards) {
 
     const cardsList = document.getElementById('cardsList');
@@ -44,126 +149,223 @@ function displayCards(cards) {
     }
 
     cards.forEach(card => {
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'card-visual';
+        const div = document.createElement('div');
+        div.className = 'card-visual';
 
         const number = card.card_number
-        ? '**** **** **** ' + card.card_number.slice(-4)
-        : '**** **** **** ****';
+            ? '**** **** **** ' + card.card_number.slice(-4)
+            : '**** **** **** ****';
 
         const status = card.status || 'unknown';
 
-        let statusColor = '';
-        if (status === 'active') statusColor = 'green';
-        else if (status === 'pending') statusColor = 'orange';
-        else if (status === 'blocked') statusColor = 'red';
+        const color =
+            status === 'active' ? 'green' :
+            status === 'pending' ? 'orange' :
+            status === 'blocked' ? 'red' : 'gray';
 
-        cardDiv.innerHTML = `
-            <p>${card.card_type || 'Card'}</p>
+        div.innerHTML = `
+            <p><strong>${card.card_type}</strong></p>
+            <p>Account: ${card.account_id}</p>
             <p class="card-number">${number}</p>
 
-            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <div style="display:flex; justify-content:space-between; margin-top:20px;">
                 <div>
-                    <p style="font-size: 12px; opacity: 0.8;">Status</p>
-                    <p class="card-holder" style="color: ${statusColor}; font-weight: bold;">
+                    <p>Status</p>
+                    <p style="color:${color}; font-weight:bold;">
                         ${status.toUpperCase()}
                     </p>
                 </div>
                 <div>
-                    <p style="font-size: 12px; opacity: 0.8;">Expires</p>
-                    <p class="card-holder">
-                        ${new Date(card.expiry_date).toLocaleDateString()}
-                    </p>
+                    <p>Expires</p>
+                    <p>${new Date(card.expiry_date).toLocaleDateString()}</p>
                 </div>
             </div>
         `;
 
-        cardsList.appendChild(cardDiv);
+        let actionBtn = '';
+
+        if (card.status === 'active') {
+            actionBtn = `
+                <button onclick="blockCard(${card.id})" class="btn-danger">Block</button>
+                <button onclick="setPin(${card.id})" class="btn-primary">Set PIN</button>
+                <button onclick="setLimit(${card.id})" class="btn-secondary">Limit</button>
+            `;
+        } else if (card.status === 'blocked') {
+            actionBtn = `
+                <button onclick="unblockCard(${card.id})" class="btn-success">Unblock</button>
+            `;
+        }
+
+        div.innerHTML += actionBtn;
+
+        cardsList.appendChild(div);
     });
 }
 
+
+async function loadAccounts() {
+    try {
+        const res = await fetch('/api/dashboard', {
+            credentials: 'include'
+        });
+
+        let data;
+        const text = await res.text();
+
+        try {
+            data = JSON.parse(text);
+        } catch {
+            console.error("NON-JSON RESPONSE:", text);
+            alert("Server error (check console)");
+            return;
+        }
+
+        const select = document.getElementById('accountId');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">Select Account</option>';
+
+        (data.accounts || []).forEach(acc => {
+            const opt = document.createElement('option');
+            opt.value = acc.id;
+            opt.textContent = `${acc.acc_type} (${acc.acc_no})`;
+            select.appendChild(opt);
+        });
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+window.setPin = async function(cardId) {
+
+    const pin = prompt("Enter 4-digit PIN:");
+
+    if (!pin || pin.length !== 4) {
+        alert("Invalid PIN");
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/cards/set-pin/${cardId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ pin })
+        });
+
+        let data;
+        const text = await res.text();
+
+        try {
+            data = JSON.parse(text);
+        } catch {
+            console.error("NON-JSON RESPONSE:", text);
+            return;
+        }
+
+        if (!res.ok) {
+            alert(data.error);
+            return;
+        }
+
+        alert("PIN set successfully");
+
+    } catch (err) {
+        console.error(err);
+    }
+};
+
 function setupEventListeners() {
-    // Hamburger menu toggle
+
+    // NAV TOGGLE
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const sidebar = document.querySelector('.sidebar');
     const overlay = document.getElementById('sidebarOverlay');
-    
-    hamburgerBtn.addEventListener('click', function() {
-        hamburgerBtn.classList.toggle('active');
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-    });
-    
-    overlay.addEventListener('click', function() {
-        hamburgerBtn.classList.remove('active');
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
+
+    if (hamburgerBtn && sidebar && overlay) {
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('active');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            hamburgerBtn.classList.remove('active');
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+
+
+    // LOGOUT
+    document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+        await fetch('/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        window.location.href = '/auth/login';
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        window.location.href = '../shared/login.html';
-    });
 
+    // APPLY FORM TOGGLE
+    const form = document.getElementById('applyCardForm');
     const applyBtn = document.getElementById('applyCardBtn');
-    if (form) {
-        const formSection = form.parentElement;
-        formSection.style.display = 'none';
+
+    if (form && applyBtn) {
+        const section = form.parentElement;
+        section.style.display = 'none';
 
         applyBtn.addEventListener('click', () => {
-            formSection.style.display =
-                formSection.style.display === 'none' ? 'block' : 'none';
+            section.style.display =
+                section.style.display === 'none' ? 'block' : 'none';
         });
     }
 
-    const form = document.getElementById('applyCardForm');
+    // APPLY CARD
+    form?.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    if (form) {
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
+        const cardType = document.getElementById('cardType').value;
+        const accountId = Number(document.getElementById('accountId').value);
 
-            const cardType = document.getElementById('cardType').value;
-            const accountId = document.getElementById('accountId').value;
+        if (!accountId) {
+            alert("Select account");
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/cards/apply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ cardType, accountId })
+            });
+
+            let data;
+            const text = await res.text();
 
             try {
-                const res = await fetch('/api/cards/apply', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        cardType,
-                        accountId
-                    })
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    alert(data.error);
-                    return;
-                }
-
-                alert("Card applied successfully!");
-
-                form.reset();        // clear form
-                loadCardsData();     // refresh cards
-
-            } catch (err) {
-                console.error(err);
+                data = JSON.parse(text);
+            } catch {
+                console.error("NON-JSON RESPONSE:", text);
+                alert("Server error (check console)");
+                return;
             }
-        });
-    }
 
-    document.getElementById('blockCardBtn').addEventListener('click', function() {
-        alert('Block Card functionality will be implemented');
+            if (!res.ok) {
+                alert(data.error);
+                return;
+            }
+
+            alert(`Card applied!\nCVV: ${data.cvv || "Check server"}`);
+
+            form.reset();
+            loadCardsData();
+
+        } catch (err) {
+            console.error(err);
+        }
     });
 
-    document.getElementById('setPinBtn').addEventListener('click', function() {
-        alert('Set PIN functionality will be implemented');
-    });
-
-    document.getElementById('cardLimitsBtn').addEventListener('click', function() {
-        alert('Manage Limits functionality will be implemented');
-    });
 }
