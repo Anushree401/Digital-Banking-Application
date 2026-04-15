@@ -11,4 +11,11 @@ router.post('/login', authController.loginUser);
 router.get('/register', authController.showRegister);
 router.post('/register', authController.registerUser);
 
+// logout routes 
+router.post('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.sendStatus(200);
+    });
+});
+
 module.exports = router;
