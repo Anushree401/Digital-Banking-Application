@@ -2,6 +2,71 @@ const express = require('express');
 const router = express.Router();
 const { Account, Transaction, Loan, AccountHolder, Customer } = require('../database/models');
 
+/**
+ * @swagger
+ * /api/dashboard:
+ *   get:
+ *     summary: Get customer dashboard data
+ *     description: Returns account summary, recent transactions, and loan count for logged-in user
+ *     tags:
+ *       - Dashboard
+ *     responses:
+ *       200:
+ *         description: Dashboard data fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalBalance:
+ *                   type: number
+ *                 monthlyIncome:
+ *                   type: number
+ *                 monthlyExpenses:
+ *                   type: number
+ *                 activeLoans:
+ *                   type: integer
+ *                 transactions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       from_account_id:
+ *                         type: integer
+ *                       to_account_id:
+ *                         type: integer
+ *                       amount:
+ *                         type: number
+ *                       transaction_type:
+ *                         type: string
+ *                       timestamp:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                 accounts:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       acc_no:
+ *                         type: string
+ *                       acc_type:
+ *                         type: string
+ *                       balance:
+ *                         type: number
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/', async (req, res) => {
   try {
     if (!req.session.user) {

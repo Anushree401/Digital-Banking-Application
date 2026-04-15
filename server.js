@@ -3,6 +3,8 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const { sequelize } = require('./database/models');
 const path = require('path');
+const swaggerUi = require('swagger-ui-express');
+const swaggerJsdoc = require('swagger-jsdoc');
 
 sequelize.sync({ alter: true });
 
@@ -51,6 +53,27 @@ app.use(
     '/loan-officer/css', 
     express.static(path.join(__dirname, 'views', 'loan-officer', 'css'))
 );
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Digital Banking API',
+      version: '1.0.0',
+      description: 'API documentation for your banking system',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+      },
+    ],
+  },
+  apis: ['./routes/*.js'], // VERY IMPORTANT
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 function requireAuthenticatedLoanOfficer(req, res, next) {
   if (!req.session.user) {

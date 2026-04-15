@@ -3,6 +3,19 @@ const router = express.Router();
 const { Loan, Customer, User, LoanOfficer } = require('../database/models');
 const { authorize } = require('../middleware/roleMiddleware');
 
+/**
+ * @swagger
+ * /api/loans:
+ *   get:
+ *     summary: Get loans based on user role
+ *     tags:
+ *       - Loans
+ *     responses:
+ *       200:
+ *         description: List of loans
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -116,6 +129,32 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/loans/apply:
+ *   post:
+ *     summary: Apply for a loan
+ *     tags:
+ *       - Loans
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               principal_amount:
+ *                 type: number
+ *               tenure_months:
+ *                 type: number
+ *               loan_type:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Loan application submitted
+ *       400:
+ *         description: Invalid input
+ */
 router.post('/apply', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -199,6 +238,25 @@ router.post('/apply', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/loans/approve/{id}:
+ *   put:
+ *     summary: Approve a loan (loan officer only)
+ *     tags:
+ *       - Loans
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Loan approved
+ *       403:
+ *         description: Forbidden
+ */
 router.put('/approve/:id', authorize('loan_officer'), async (req, res) => {
   try {
     const loanOfficer = await LoanOfficer.findOne({ where: { user_id: req.session.user.id } });
@@ -218,6 +276,21 @@ router.put('/approve/:id', authorize('loan_officer'), async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/loans/reject/{id}:
+ *   put:
+ *     summary: Reject a loan (loan officer only)
+ *     tags:
+ *       - Loans
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Loan rejected
+ */
 router.put('/reject/:id', authorize('loan_officer'), async (req, res) => {
   try {
     const loanOfficer = await LoanOfficer.findOne({ where: { user_id: req.session.user.id } });
@@ -237,6 +310,21 @@ router.put('/reject/:id', authorize('loan_officer'), async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/loans/reject/{id}:
+ *   put:
+ *     summary: Reject a loan (loan officer only)
+ *     tags:
+ *       - Loans
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: Loan rejected
+ */
 router.post('/pay', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -300,6 +388,21 @@ router.post('/pay', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/loans/{id}/schedule:
+ *   get:
+ *     summary: Get EMI schedule for a loan
+ *     tags:
+ *       - Loans
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: EMI schedule
+ */
 router.get('/:id/schedule', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -371,6 +474,26 @@ router.get('/:id/schedule', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/loans/payoff:
+ *   post:
+ *     summary: Pay off loan early
+ *     tags:
+ *       - Loans
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               loan_id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Loan closed
+ */
 router.post('/payoff', async (req, res) => {
   try {
     if (!req.session.user) {

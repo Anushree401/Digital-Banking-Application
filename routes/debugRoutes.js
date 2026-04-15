@@ -7,8 +7,23 @@ const {
   Customer, 
   AccountHolder 
 } = require('../database/models');
+const { authorize } = require('../middleware/roleMiddleware');
 
-router.get('/all', async (req, res) => {
+/**
+ * @swagger
+ * /api/debug/all:
+ *   get:
+ *     summary: Get full database dump (Debug only)
+ *     description: Returns all users, customers, accounts, and transactions (Restricted)
+ *     tags:
+ *       - Debug
+ *     responses:
+ *       200:
+ *         description: Full system data
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/all', authorize('loan_officer'), async (req, res) => {
     const users = await User.findAll();
     const accounts = await Account.findAll();
     const transactions = await Transaction.findAll();

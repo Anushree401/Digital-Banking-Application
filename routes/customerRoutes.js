@@ -56,6 +56,19 @@ function buildCustomerPayload(customer) {
   };
 }
 
+/**
+ * @swagger
+ * /api/customers:
+ *   get:
+ *     summary: Get all customers (Loan Officer only)
+ *     tags:
+ *       - Customers
+ *     responses:
+ *       200:
+ *         description: List of customers with accounts and loans
+ *       403:
+ *         description: Forbidden
+ */
 router.get('/', authorize('loan_officer'), async (req, res) => {
   try {
     const customers = await Customer.findAll({
@@ -87,6 +100,19 @@ router.get('/', authorize('loan_officer'), async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/customers/pending-kyc:
+ *   get:
+ *     summary: Get customers with pending KYC
+ *     tags:
+ *       - Customers
+ *     responses:
+ *       200:
+ *         description: Customers requiring KYC verification
+ *       403:
+ *         description: Forbidden
+ */
 router.get('/pending-kyc', authorize('loan_officer'), async (req, res) => {
   try {
     const customers = await Customer.findAll({
@@ -123,6 +149,27 @@ router.get('/pending-kyc', authorize('loan_officer'), async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/customers/{id}:
+ *   get:
+ *     summary: Get customer details by ID
+ *     tags:
+ *       - Customers
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Customer details
+ *       404:
+ *         description: Customer not found
+ *       403:
+ *         description: Forbidden
+ */
 router.get('/:id', authorize('loan_officer'), async (req, res) => {
   try {
     const customer = await Customer.findByPk(req.params.id, {
@@ -157,6 +204,37 @@ router.get('/:id', authorize('loan_officer'), async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/customers/{id}/kyc:
+ *   put:
+ *     summary: Update customer KYC status
+ *     tags:
+ *       - Customers
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: verified
+ *     responses:
+ *       200:
+ *         description: KYC updated successfully
+ *       404:
+ *         description: Customer not found
+ *       403:
+ *         description: Forbidden
+ */
 router.put('/:id/kyc', authorize('loan_officer'), async (req, res) => {
   try {
     const customer = await Customer.findByPk(req.params.id);

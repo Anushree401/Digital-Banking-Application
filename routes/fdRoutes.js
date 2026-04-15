@@ -3,6 +3,40 @@ const router = express.Router();
 
 const { FixedDeposit, Account, Customer, Transaction } = require('../database/models');
 
+/**
+ * @swagger
+ * /api/fds:
+ *   get:
+ *     summary: Get user's fixed deposits
+ *     tags:
+ *       - Fixed Deposits
+ *     responses:
+ *       200:
+ *         description: List of fixed deposits
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   principal_amount:
+ *                     type: number
+ *                   interest_rate:
+ *                     type: number
+ *                   start_date:
+ *                     type: string
+ *                   maturity_date:
+ *                     type: string
+ *                   status:
+ *                     type: string
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Customer not found
+ */
 router.get('/', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -30,7 +64,36 @@ router.get('/', async (req, res) => {
   }
 });
 
-
+/**
+ * @swagger
+ * /api/fds/create:
+ *   post:
+ *     summary: Create a fixed deposit
+ *     tags:
+ *       - Fixed Deposits
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               accountId:
+ *                 type: integer
+ *               amount:
+ *                 type: number
+ *               tenureMonths:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: FD created successfully
+ *       400:
+ *         description: Missing fields or insufficient balance
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Account or customer not found
+ */
 router.post('/create', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -88,7 +151,6 @@ router.post('/create', async (req, res) => {
       to_account_id: acc.id,
       amount,
       transaction_type: 'Debit',
-      transaction_category: 'deposit',
       description: 'FD Created',
       status: 'success'
     });

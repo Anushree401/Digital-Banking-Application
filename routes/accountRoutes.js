@@ -3,6 +3,41 @@ const router = express.Router();
 
 const { Account, AccountHolder, Customer } = require('../database/models');
 
+/**
+ * @swagger
+ * /api/accounts:
+ *   get:
+ *     summary: Get user accounts
+ *     description: Returns all bank accounts linked to the logged-in user
+ *     tags:
+ *       - Accounts
+ *     responses:
+ *       200:
+ *         description: List of user accounts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   acc_no:
+ *                     type: string
+ *                   acc_type:
+ *                     type: string
+ *                   balance:
+ *                     type: number
+ *                   status:
+ *                     type: string
+ *       401:
+ *         description: Unauthorized (user not logged in)
+ *       404:
+ *         description: Customer not found
+ *       500:
+ *         description: Server error
+ */
 router.get('/', async (req, res) => {
   try {
     if (!req.session.user) {

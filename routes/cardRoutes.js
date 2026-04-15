@@ -1,9 +1,23 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 
 const { Card, AccountHolder, Customer, Account, User } = require('../database/models');
 const { authorize } = require('../middleware/roleMiddleware');
 
+/**
+ * @swagger
+ * /api/cards:
+ *   get:
+ *     summary: Get user's active cards
+ *     tags:
+ *       - Cards
+ *     responses:
+ *       200:
+ *         description: List of active cards
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -40,6 +54,19 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/cards:
+ *   get:
+ *     summary: Get user's active cards
+ *     tags:
+ *       - Cards
+ *     responses:
+ *       200:
+ *         description: List of active cards
+ *       401:
+ *         description: Unauthorized
+ */
 router.post('/apply', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -78,6 +105,27 @@ router.post('/apply', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/cards/approve/{id}:
+ *   put:
+ *     summary: Approve a card
+ *     tags:
+ *       - Cards
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Card approved
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Card not found
+ */
 router.put('/approve/:id', authorize('loan_officer'), async (req, res) => {
   try {
     if (!req.session.user || req.session.user.role !== 'loan_officer') {
@@ -98,6 +146,27 @@ router.put('/approve/:id', authorize('loan_officer'), async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/cards/reject/{id}:
+ *   put:
+ *     summary: Reject a card
+ *     tags:
+ *       - Cards
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Card rejected
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Card not found
+ */
 router.put('/reject/:id', authorize('loan_officer'), async (req, res) => {
   try {
     if (!req.session.user || req.session.user.role !== 'loan_officer') {
@@ -116,6 +185,19 @@ router.put('/reject/:id', authorize('loan_officer'), async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/cards/pending:
+ *   get:
+ *     summary: Get all pending card applications
+ *     tags:
+ *       - Cards
+ *     responses:
+ *       200:
+ *         description: List of pending cards
+ *       403:
+ *         description: Forbidden
+ */
 router.get('/pending', authorize('loan_officer'), async (req, res) => {
   try {
     if (!req.session.user || req.session.user.role !== 'loan_officer') {

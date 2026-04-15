@@ -2,6 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { Investor, Offer, Account, Customer, AccountHolder, Transaction  } = require('../database/models');
 
+/**
+ * @swagger
+ * /api/investments:
+ *   get:
+ *     summary: Get user investments
+ *     tags:
+ *       - Investments
+ *     responses:
+ *       200:
+ *         description: List of investments
+ *       401:
+ *         description: Unauthorized
+ */
 router.get('/', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -46,6 +59,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/investments:
+ *   post:
+ *     summary: Create or add to investment portfolio
+ *     tags:
+ *       - Investments
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Investment created or updated
+ *       400:
+ *         description: Invalid amount or insufficient balance
+ *       401:
+ *         description: Unauthorized
+ */
 router.post('/', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -96,10 +133,11 @@ router.post('/', async (req, res) => {
 
     await Transaction.create({
       from_account_id: account.id,
-      to_account_id: account.id,
-      amount: amount,
+      to_account_id: null,
+      amount,
       transaction_type: 'Debit',
-      description: 'Investment created'
+      description: 'Investment created',
+      status: 'success'
     });
 
     let investment = await Investor.findOne({
@@ -127,6 +165,17 @@ router.post('/', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/investments/offers:
+ *   get:
+ *     summary: Get investment offers
+ *     tags:
+ *       - Investments
+ *     responses:
+ *       200:
+ *         description: List of available offers
+ */
 router.get('/offers', async (req, res) => {
   try {
     const offers = await Offer.findAll();
@@ -137,6 +186,36 @@ router.get('/offers', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/investments/{id}/withdraw:
+ *   post:
+ *     summary: Withdraw from investment
+ *     tags:
+ *       - Investments
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               amount:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Withdraw successful
+ *       400:
+ *         description: Invalid amount or insufficient balance
+ *       404:
+ *         description: Investment not found
+ */
 router.post('/:id/withdraw', async (req, res) => {
   try {
     if (!req.session.user) {
@@ -189,11 +268,12 @@ router.post('/:id/withdraw', async (req, res) => {
     await account.save();
 
     await Transaction.create({
-      from_account_id: account.id,
+      from_account_id: null,
       to_account_id: account.id,
-      amount: amount,
+      amount,
       transaction_type: 'Credit',
-      description: 'Investment withdrawal'
+      description: 'Investment withdrawal',
+      status: 'success'
     });
 
     res.json({ message: 'Withdraw successful' });
