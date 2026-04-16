@@ -144,6 +144,8 @@ height:34px;
 
 <form action="/auth/register" method="POST">
 
+    <p id="formError" style="color:red; margin-bottom:10px;"></p>
+
 <input type="hidden" id="roleInput" name="role" value="customer">
 
 
@@ -174,6 +176,16 @@ height:34px;
 <div class="form-group full-width">
 <label for="password">Password</label>
 <input type="password" id="password" name="password" title="Password" required>
+<small id="passStrength" style="margin-top:5px;"></small>
+</div>
+
+<div id="otpSection" style="display:none; margin-top:20px;">
+    <label>Enter OTP</label>
+    <input type="text" id="otpInput" placeholder="Enter 6-digit OTP">
+
+    <button type="button" id="verifyOtpBtn" class="submit-btn" style="margin-top:10px;">
+        Verify OTP
+    </button>
 </div>
 
 <div class="form-group full-width">
@@ -251,7 +263,130 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <script src="../../middleware/shared/main.js"></script>
-<script src="../../middleware/shared/auth.js"></script>
+<script>
+let formRef = null;
 
+document.querySelector('form').addEventListener('submit', async function(e) {
+
+    e.preventDefault(); 
+    formRef = this;
+
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const pan = document.querySelector('[name="pan"]').value.trim();
+    const aadhaar = document.querySelector('[name="aadhaar"]').value.trim();
+
+    const errorBox = document.getElementById('formError');
+    errorBox.innerText = '';
+
+    // VALIDATIONS
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailValid) {
+        errorBox.innerText = "Invalid email";
+        return;
+    }
+
+    const phoneValid = /^[6-9]\d{9}$/.test(phone);
+    if (!phoneValid) {
+        errorBox.innerText = "Invalid phone number";
+        return;
+    }
+
+    if (password.length < 6) {
+        errorBox.innerText = "Password must be at least 6 characters";
+        return;
+    }
+
+    if (pan && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(pan)) {
+        errorBox.innerText = "Invalid PAN format";
+        return;
+    }
+
+    if (aadhaar && !/^\d{12}$/.test(aadhaar.replace(/\s/g,''))) {
+        errorBox.innerText = "Invalid Aadhaar number";
+        return;
+    }
+
+    try {
+        // SEND OTP
+        await fetch('/auth/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+
+        // SHOW OTP SECTION
+        document.getElementById('otpSection').style.display = 'block';
+
+        errorBox.innerText = "OTP sent to your email";
+
+    } catch (err) {
+        console.error(err);
+        errorBox.innerText = "Failed to send OTP";
+    }
+
+});
+
+
+document.getElementById('verifyOtpBtn').addEventListener('click', async function() {
+
+    const otp = document.getElementById('otpInput').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const errorBox = document.getElementById('formError');
+
+    if (!otp) {
+        errorBox.innerText = "Enter OTP";
+        return;
+    }
+
+    try {
+        const res = await fetch('/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ otp, email })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            errorBox.innerText = "Invalid OTP";
+            return;
+        }
+
+        formRef.submit();
+
+    } catch (err) {
+        console.error(err);
+        errorBox.innerText = "Verification failed";
+    }
+});
+</script>
+<script>
+document.getElementById('password').addEventListener('input', function() {
+    const val = this.value;
+    const strength = document.getElementById('passStrength');
+
+    if (val.length === 0) {
+        strength.innerText = '';
+        return;
+    }
+
+    if (val.length < 6) {
+        strength.innerText = "Weak";
+        strength.style.color = "red";
+    } 
+    else if (/[A-Z]/.test(val) && /\d/.test(val)) {
+        strength.innerText = "Strong";
+        strength.style.color = "green";
+    } 
+    else {
+        strength.innerText = "Medium";
+        strength.style.color = "orange";
+    }
+});
+</script>
 </body>
 </html>

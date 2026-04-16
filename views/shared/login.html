@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/responsive.css">
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 </head>
 
 <body class="login-layout">
@@ -70,6 +72,13 @@ Enter your email and password to continue
 
 <p id="error-message"></p>
 
+<div id="g_id_onload"
+     data-client_id="310121859260-prml55ll4ug7p15li385fd2r2vr7cims.apps.googleusercontent.com"
+     data-callback="handleGoogleLogin">
+</div>
+
+<div class="g_id_signin"></div>
+
 </form>
 
 <p class="register-link">
@@ -88,6 +97,50 @@ const error = params.get("error");
 if (error) {
 document.getElementById("error-message").innerText =
 "Invalid email or password";
+}
+</script>
+
+<script>
+document.querySelector('.login-form').addEventListener('submit', function(e) {
+    const email = document.querySelector('[name="email"]').value.trim();
+    const password = document.querySelector('[name="password"]').value.trim();
+    const errorBox = document.getElementById('error-message');
+    document.getElementById('email').style.borderColor = 'red'; 
+
+    errorBox.innerText = '';
+
+    // Email validation
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!emailValid) {
+        e.preventDefault();
+        errorBox.innerText = "Enter a valid email address";
+        return;
+    }
+
+    // Password validation
+    if (password.length < 6) {
+        e.preventDefault();
+        errorBox.innerText = "Password must be at least 6 characters";
+        return;
+    }
+});
+</script>
+
+<script>
+function handleGoogleLogin(response) {
+    console.log("Google JWT:", response.credential);
+
+    // send to backend
+    fetch('/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential })
+    })
+    .then(res => res.json())
+    .then(data => {
+        window.location.href = data.redirect;
+    })
+    .catch(err => console.error(err));
 }
 </script>
 

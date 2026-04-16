@@ -5,17 +5,11 @@ const { sequelize } = require('./database/models');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
+const passport = require('./config/passport');
 
 sequelize.sync({ alter: true });
 
 const app = express();
-app.use((req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self' 'unsafe-inline' 'unsafe-eval' data:;"
-  );
-  next();
-}); // set csp header to allow inline scripts and styles (for development only, not recommended for production)
 dotenv.config();
 const secret_key = process.env.SECRET_KEY_APP;
 
@@ -110,6 +104,39 @@ app.use('/debug', require('./routes/debugRoutes'));
 app.get('/', (req, res) => {
   res.redirect('/shared/index.html');
 });
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+const helmet = require('helmet');
+
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://accounts.google.com",
+        "https://apis.google.com"
+      ],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://*.googleusercontent.com"
+      ],
+      connectSrc: [
+        "'self'",
+        "https://accounts.google.com"
+      ],
+      frameSrc: [
+        "'self'",
+        "https://accounts.google.com"
+      ]
+    },
+  })
+);
 
 // auth routes
 app.use('/auth', require('./routes/authRoutes'));
