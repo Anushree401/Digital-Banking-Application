@@ -1,51 +1,198 @@
-@media (max-width: 980px) {
-    .portal-shell {
+@media (max-width: 1024px) {
+    .dashboard-grid {
         grid-template-columns: 1fr;
-    }
-
-    .sidebar {
-        position: static;
-        height: auto;
-        border-right: 0;
-        border-bottom: 1px solid #d5e2f6;
-    }
-
-    .nav-menu {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
-    }
-
-    .nav-item a {
-        margin: 0;
     }
 
     .grid-2 {
         grid-template-columns: 1fr;
     }
+
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-@media (max-width: 640px) {
-    .content {
-        padding: 14px;
+@media (max-width: 768px) {
+    body {
+        grid-template-rows: 60px 1fr 52px;
     }
 
-    .topbar {
-        flex-direction: column;
-        align-items: flex-start;
+    .header-container {
+        padding: 0 16px;
+    }
+
+    .logo h1 {
+        font-size: 18px;
+    }
+
+    .sidebar {
+        width: 100%;
+        left: -100%;
+        padding-top: 70px;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .user-info {
         gap: 8px;
     }
 
-    .stats {
-        grid-template-columns: 1fr;
+    .user-name {
+        display: none;
     }
 
-    .nav-menu {
-        grid-template-columns: 1fr 1fr;
+    .logout-btn {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        padding: 16px;
+    }
+
+    .welcome-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .quick-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .hero-panel {
+        flex-direction: column;
+    }
+
+    .section-header {
+        flex-direction: column;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .panel,
+    .card,
+    .section,
+    .accounts-overview,
+    .recent-transactions,
+    .quick-actions,
+    .transfer-section,
+    .filter-section,
+    .loan-card,
+    .investment-card,
+    .deposit-card {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+
+    .panel h2,
+    .panel h3,
+    .card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+    }
+
+    .account-item,
+    .list-item,
+    .customer-item {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     th,
     td {
-        white-space: nowrap;
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    .info-item {
+        padding: 10px 0;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .action-buttons,
+    .actions-grid {
+        flex-direction: column;
+        grid-template-columns: 1fr;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .btn-approve,
+    .btn-reject,
+    .action-btn,
+    #transferSubmit {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 12px;
+    }
+
+    .logo h1 {
+        font-size: 16px;
+    }
+
+    .welcome-section h2 {
+        font-size: 1.2rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .stat-card h3 {
+        font-size: 0.7rem;
+    }
+
+    .hero-panel {
+        padding: 14px;
+    }
+
+    .hero-chip {
+        width: 100%;
+        text-align: center;
+    }
+
+    .panel,
+    .card,
+    .section,
+    .accounts-overview,
+    .recent-transactions,
+    .quick-actions,
+    .transfer-section,
+    .filter-section,
+    .loan-card,
+    .investment-card,
+    .deposit-card {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    th,
+    td {
+        padding: 6px;
+        font-size: 0.75rem;
+    }
+
+    .status-badge,
+    .badge {
+        font-size: 0.65rem;
+        padding: 3px 6px;
     }
 }

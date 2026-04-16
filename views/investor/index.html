@@ -10,7 +10,7 @@
 <body>
     <header class="header">
         <div class="header-container">
-            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+            <button class="hamburger-btn" id="hamburgerBtn" data-dashboard-toggle="true" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -20,49 +20,116 @@
             </div>
             <div class="user-info">
                 <span class="user-name" id="userName">Broke Guy</span>
-                <button class="logout-btn" id="logoutBtn">Logout</button>
+                <button class="logout-btn" id="logoutBtn" data-logout-endpoint="/api/logout" data-logout-redirect="../shared/login.html">Logout</button>
             </div>
         </div>
     </header>
-    <div class="portal-shell">
-        <aside class="sidebar">
-            <div class="brand">BrokeBank Investor</div>
-            <ul class="nav-menu">
-                <li class="nav-item active"><a href="index.html">Dashboard</a></li>
-                <li class="nav-item"><a href="investments.html">Investments</a></li>
-                <li class="nav-item"><a href="offers.html">Offers</a></li>
-                <li class="nav-item"><a href="portfolio.html">Portfolio</a></li>
-                <li class="nav-item"><a href="profile.html">Profile</a></li>
-                <li class="nav-item"><a href="support.html">Support</a></li>
-            </ul>
-        </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item active"><a href="index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="investments.html">Investments</a></li>
+            <li class="nav-item"><a href="offers.html">Offers</a></li>
+            <li class="nav-item"><a href="portfolio.html">Portfolio</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="support.html">Support</a></li>
+        </ul>
+    </nav>
 
-        <main class="content">
-            <section class="topbar">
-                <h1>Investor Command Center</h1>
-                <span class="role-chip">INVESTOR</span>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="welcome-section">
+                <h2>Welcome back, <span id="welcomeName">Investor</span>!</h2>
+                <p class="date" id="currentDate"></p>
+                <p class="section-subtitle">Track live deals, rebalance exposure, and stay ahead of market shifts.</p>
             </section>
 
-            <section class="stats">
-                <article class="stat-card"><h3>Total Deployed</h3><p class="stat-value" id="invTotalDeployed">--</p></article>
-                <article class="stat-card"><h3>Active Deals</h3><p class="stat-value" id="invActiveDeals">--</p></article>
-                <article class="stat-card"><h3>Expected Yield</h3><p class="stat-value" id="invExpectedYield">--</p></article>
-                <article class="stat-card"><h3>This Month Payout</h3><p class="stat-value" id="invMonthPayout">--</p></article>
+            <section class="quick-stats">
+                <div class="stat-card">
+                    <h3>Total Deployed</h3>
+                    <p class="stat-value" id="invTotalDeployed">--</p>
+                    <span class="stat-label">Across active positions</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Deals</h3>
+                    <p class="stat-value" id="invActiveDeals">--</p>
+                    <span class="stat-label">Open investment records</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Expected Yield</h3>
+                    <p class="stat-value" id="invExpectedYield">--</p>
+                    <span class="stat-label">Blended portfolio estimate</span>
+                </div>
+                <div class="stat-card">
+                    <h3>Watchlist</h3>
+                    <p class="stat-value" id="invWatchlistCount">0</p>
+                    <span class="stat-label">Tracked opportunities</span>
+                </div>
             </section>
 
-            <section class="grid-2">
+            <section class="dashboard-grid">
+                <article class="panel panel-wide">
+                    <div class="section-header">
+                        <div>
+                            <h3>Active Investments</h3>
+                            <p class="section-subtitle">Click track on positions you want to monitor closely</p>
+                        </div>
+                        <button class="btn alt" id="refreshInvestorBtn" type="button">Refresh Data</button>
+                    </div>
+                    <div class="accounts-list" id="invInvestmentList"></div>
+                </article>
+
                 <article class="panel">
-                    <h2>Top Live Offers</h2>
+                    <div class="section-header">
+                        <div>
+                            <h3>Portfolio Split</h3>
+                            <p class="section-subtitle">Allocation by risk band</p>
+                        </div>
+                        <button class="btn alt" id="toggleRiskBtn" type="button">Focus High Risk</button>
+                    </div>
+                    <div class="list" id="invRiskSplit"></div>
+                </article>
+            </section>
+
+            <section class="dashboard-grid">
+                <article class="panel">
+                    <div class="section-header">
+                        <div>
+                            <h3>Top Live Offers</h3>
+                            <p class="section-subtitle">Track or invest directly from the feed</p>
+                        </div>
+                        <button class="btn alt" id="exportSnapshotBtn" type="button">Export Snapshot</button>
+                    </div>
                     <div class="list" id="invLiveOffers"></div>
                 </article>
 
                 <article class="panel">
-                    <h2>Portfolio Snapshot</h2>
-                    <div class="list" id="invRiskSplit"></div>
+                    <div class="section-header">
+                        <div>
+                            <h3>Activity Feed</h3>
+                            <p class="section-subtitle">Recent signals from your portfolio</p>
+                        </div>
+                        <button class="btn alt" id="clearWatchlistBtn" type="button">Clear Watchlist</button>
+                    </div>
+                    <div class="list" id="invActivityFeed"></div>
                 </article>
             </section>
-        </main>
-    </div>
+
+            <section class="quick-actions">
+                <h3>Investor Actions</h3>
+                <div class="actions-grid">
+                    <button class="action-btn" id="trackOffersBtn" type="button">Track New Offers</button>
+                    <button class="action-btn" id="rebalanceBtn" type="button">Rebalance Suggestion</button>
+                    <button class="action-btn" id="viewPortfolioBtn" type="button">Open Portfolio</button>
+                    <button class="action-btn" id="saveSnapshotBtn" type="button">Save Snapshot</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
+    </footer>
     <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/investor/dashboard.js"></script>
 </body>

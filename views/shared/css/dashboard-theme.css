@@ -1,0 +1,349 @@
+body.dashboard-page {
+    --bg: #edf4ff;
+    --panel: #ffffff;
+    --panel-soft: #f4f8ff;
+    --line: #d7e4f6;
+    --ink: #173256;
+    --ink-soft: #506a8d;
+    --brand: #2d6fbd;
+    --brand-2: #4d8ede;
+    --ok: #1f8b5f;
+    --bad: #d35252;
+    background: radial-gradient(circle at 10% -15%, rgba(255, 255, 255, 0.9), transparent 35%), var(--bg);
+    color: var(--ink);
+    color-scheme: light;
+}
+
+body.dashboard-page[data-theme="dark"] {
+    --bg: #09111f;
+    --panel: #101b2d;
+    --panel-soft: #152238;
+    --line: #23344e;
+    --ink: #e6eefc;
+    --ink-soft: #98a9c4;
+    --brand: #7db7ff;
+    --brand-2: #9ec9ff;
+    --ok: #7ce0ad;
+    --bad: #ff8f8f;
+    background: radial-gradient(circle at 10% -15%, rgba(92, 126, 190, 0.18), transparent 35%), var(--bg);
+    color-scheme: dark;
+}
+
+body.dashboard-page .header {
+    background: rgba(250, 253, 255, 0.9);
+    border-bottom: 1px solid var(--line);
+}
+
+body.dashboard-page[data-theme="dark"] .header {
+    background: rgba(12, 18, 30, 0.9);
+}
+
+body.dashboard-page .header-container {
+    gap: 14px;
+}
+
+body.dashboard-page .logo {
+    display: inline-flex;
+    align-items: center;
+}
+
+body.dashboard-page .brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+}
+
+body.dashboard-page .brand-link img {
+    width: 34px;
+    height: 34px;
+}
+
+body.dashboard-page .user-info {
+    gap: 10px;
+}
+
+body.dashboard-page .theme-toggle {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(37, 78, 138, 0.08);
+}
+
+body.dashboard-page .theme-toggle:hover {
+    transform: translateY(-1px);
+}
+
+body.dashboard-page .logout-btn {
+    border-color: var(--line);
+    background: var(--panel);
+    color: var(--ink);
+}
+
+body.dashboard-page .logout-btn:hover {
+    background: var(--panel-soft);
+}
+
+body.dashboard-page .hamburger-btn span {
+    background: var(--ink);
+}
+
+body.dashboard-page .sidebar {
+    background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+    border-right: 1px solid var(--line);
+    box-shadow: 8px 0 30px rgba(18, 49, 96, 0.14);
+}
+
+body.dashboard-page .sidebar-overlay {
+    background: rgba(11, 31, 64, 0.34);
+}
+
+body.dashboard-page .nav-item a,
+body.dashboard-page .user-name,
+body.dashboard-page .date,
+body.dashboard-page .stat-label,
+body.dashboard-page .stat-card h3,
+body.dashboard-page .section-subtitle,
+body.dashboard-page .meta,
+body.dashboard-page .account-number,
+body.dashboard-page .info-item .label,
+body.dashboard-page .customer-item .meta-row,
+body.dashboard-page .detail-card .meta-row,
+body.dashboard-page .empty-state,
+body.dashboard-page .view-all-link,
+body.dashboard-page .inline-link,
+body.dashboard-page .role-chip,
+body.dashboard-page .hero-chip,
+body.dashboard-page .badge,
+body.dashboard-page .status-badge,
+body.dashboard-page .footer {
+    color: var(--ink-soft);
+}
+
+body.dashboard-page .nav-item a {
+    background: transparent;
+}
+
+body.dashboard-page .nav-item a:hover,
+body.dashboard-page .nav-item.active a {
+    background: color-mix(in srgb, var(--brand) 14%, transparent);
+    color: var(--ink);
+    border-color: color-mix(in srgb, var(--brand) 28%, transparent);
+}
+
+body.dashboard-page .main-content {
+    background: transparent;
+}
+
+body.dashboard-page .dashboard-container {
+    max-width: 1360px;
+}
+
+body.dashboard-page .welcome-section,
+body.dashboard-page .hero-panel,
+body.dashboard-page .stat-card,
+body.dashboard-page .panel,
+body.dashboard-page .accounts-overview,
+body.dashboard-page .recent-transactions,
+body.dashboard-page .quick-actions,
+body.dashboard-page .transfer-section,
+body.dashboard-page .filter-section,
+body.dashboard-page .loan-card,
+body.dashboard-page .investment-card,
+body.dashboard-page .deposit-card,
+body.dashboard-page .section,
+body.dashboard-page .card,
+body.dashboard-page .customer-item,
+body.dashboard-page .detail-card,
+body.dashboard-page .account-item,
+body.dashboard-page .list-item,
+body.dashboard-page .empty-state,
+body.dashboard-page .info-item,
+body.dashboard-page .modal-content,
+body.dashboard-page .portfolio-summary {
+    background: var(--panel);
+    border-color: var(--line);
+    color: var(--ink);
+    box-shadow: 0 10px 24px rgba(37, 78, 138, 0.08);
+}
+
+body.dashboard-page .hero-panel,
+body.dashboard-page .panel,
+body.dashboard-page .stat-card {
+    background: linear-gradient(160deg, var(--panel), color-mix(in srgb, var(--panel) 84%, var(--panel-soft)));
+}
+
+body.dashboard-page .stat-value,
+body.dashboard-page .account-balance,
+body.dashboard-page .info-item .value,
+body.dashboard-page .value-success,
+body.dashboard-page .value-warning,
+body.dashboard-page .value-danger,
+body.dashboard-page .btn,
+body.dashboard-page .btn-primary,
+body.dashboard-page .btn-secondary,
+body.dashboard-page .btn-approve,
+body.dashboard-page .btn-reject,
+body.dashboard-page .action-btn,
+body.dashboard-page #transferSubmit {
+    color: #ffffff;
+}
+
+body.dashboard-page .stat-value,
+body.dashboard-page .account-balance,
+body.dashboard-page .info-item .value {
+    color: var(--brand);
+}
+
+body.dashboard-page .table-wrap,
+body.dashboard-page table {
+    color: var(--ink);
+}
+
+body.dashboard-page thead {
+    background: color-mix(in srgb, var(--brand) 10%, var(--panel));
+}
+
+body.dashboard-page th,
+body.dashboard-page td {
+    border-bottom-color: var(--line);
+}
+
+body.dashboard-page tr:hover {
+    background: color-mix(in srgb, var(--brand) 8%, var(--panel));
+}
+
+body.dashboard-page .action-btn,
+body.dashboard-page .btn,
+body.dashboard-page .btn-primary,
+body.dashboard-page .btn-approve,
+body.dashboard-page .btn-reject,
+body.dashboard-page .btn-secondary,
+body.dashboard-page #transferSubmit {
+    border: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+body.dashboard-page .action-btn,
+body.dashboard-page .btn,
+body.dashboard-page .btn-primary,
+body.dashboard-page .btn-approve,
+body.dashboard-page .btn-reject,
+body.dashboard-page #transferSubmit {
+    background: var(--brand);
+}
+
+body.dashboard-page .btn-secondary,
+body.dashboard-page .btn.alt {
+    background: var(--panel-soft);
+    color: var(--ink);
+}
+
+body.dashboard-page .action-btn:hover,
+body.dashboard-page .btn:hover,
+body.dashboard-page .btn-primary:hover,
+body.dashboard-page .btn-approve:hover,
+body.dashboard-page .btn-reject:hover,
+body.dashboard-page #transferSubmit:hover {
+    background: var(--brand-2);
+    transform: translateY(-1px);
+}
+
+body.dashboard-page .btn-approve {
+    background: var(--ok);
+}
+
+body.dashboard-page .btn-reject {
+    background: var(--bad);
+}
+
+body.dashboard-page .role-chip,
+body.dashboard-page .hero-chip,
+body.dashboard-page .badge,
+body.dashboard-page .status-badge {
+    background: color-mix(in srgb, var(--brand) 14%, var(--panel));
+    border: 1px solid var(--line);
+}
+
+body.dashboard-page .badge-live,
+body.dashboard-page .status-active,
+body.dashboard-page .status-approved,
+body.dashboard-page .status-verified,
+body.dashboard-page .status-review {
+    background: color-mix(in srgb, var(--ok) 18%, var(--panel));
+    color: var(--ok);
+}
+
+body.dashboard-page .badge-review,
+body.dashboard-page .status-pending {
+    background: color-mix(in srgb, #f59e0b 18%, var(--panel));
+    color: #d18a11;
+}
+
+body.dashboard-page .badge-closed,
+body.dashboard-page .status-rejected,
+body.dashboard-page .status-closed {
+    background: color-mix(in srgb, var(--bad) 14%, var(--panel));
+    color: var(--bad);
+}
+
+body.dashboard-page .form-group input,
+body.dashboard-page .form-group select,
+body.dashboard-page .form-group textarea,
+body.dashboard-page .transfer-box input {
+    background: var(--panel);
+    color: var(--ink);
+    border-color: var(--line);
+}
+
+body.dashboard-page .footer {
+    background: color-mix(in srgb, var(--panel) 82%, var(--panel-soft));
+    border-top: 1px solid var(--line);
+}
+
+body.dashboard-page .portfolio-summary {
+    background: linear-gradient(145deg, var(--panel), var(--panel-soft));
+    color: var(--ink);
+}
+
+body.dashboard-page .portfolio-summary .summary-row {
+    color: var(--ink-soft);
+}
+
+body.dashboard-page .modal-overlay {
+    background: rgba(0, 0, 0, 0.55);
+}
+
+body.dashboard-page .modal-header,
+body.dashboard-page .modal-footer {
+    border-color: var(--line);
+}
+
+@media (max-width: 768px) {
+    body.dashboard-page .header-container {
+        padding: 0 14px;
+    }
+
+    body.dashboard-page .brand-link span {
+        font-size: 1rem;
+    }
+
+    body.dashboard-page .theme-toggle {
+        padding: 7px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    body.dashboard-page .user-name {
+        display: none;
+    }
+}

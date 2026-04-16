@@ -8,33 +8,53 @@
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <div class="portal-shell">
-        <aside class="sidebar">
-            <div class="brand">BrokeBank Investor</div>
-            <ul class="nav-menu">
-                <li class="nav-item"><a href="index.html">Dashboard</a></li>
-                <li class="nav-item"><a href="investments.html">Investments</a></li>
-                <li class="nav-item"><a href="offers.html">Offers</a></li>
-                <li class="nav-item"><a href="portfolio.html">Portfolio</a></li>
-                <li class="nav-item"><a href="profile.html">Profile</a></li>
-                <li class="nav-item active"><a href="support.html">Support</a></li>
-            </ul>
-        </aside>
+    <header class="header">
+        <div class="header-container">
+            <button class="hamburger-btn" id="hamburgerBtn" data-dashboard-toggle="true" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="logo">
+                <h1>BrokeBank</h1>
+            </div>
+            <div class="user-info">
+                <span class="user-name" id="userName">Broke Guy</span>
+                <button class="logout-btn" id="logoutBtn" data-logout-endpoint="/api/logout" data-logout-redirect="../shared/login.html">Logout</button>
+            </div>
+        </div>
+    </header>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <nav class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="index.html">Dashboard</a></li>
+            <li class="nav-item"><a href="investments.html">Investments</a></li>
+            <li class="nav-item"><a href="offers.html">Offers</a></li>
+            <li class="nav-item"><a href="portfolio.html">Portfolio</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item active"><a href="support.html">Support</a></li>
+        </ul>
+    </nav>
 
-        <main class="content">
-            <section class="topbar">
-                <h1>Support Desk</h1>
-                <span class="role-chip">INVESTOR</span>
+    <main class="main-content">
+        <div class="dashboard-container">
+            <section class="welcome-section">
+                <h2>Support Desk</h2>
+                <p class="date">Recent tickets and service context</p>
             </section>
 
             <section class="panel">
                 <h2>Recent Tickets</h2>
                 <div class="list" id="supportTickets"></div>
                 <br>
-                <button class="btn">Create New Ticket</button>
+                <button class="btn" type="button">Create New Ticket</button>
             </section>
-        </main>
-    </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Digital Banking Application. All rights reserved.</p>
+    </footer>
     <script src="../../middleware/shared/main.js"></script>
     <script src="../../middleware/investor/support.js"></script>
 </body>

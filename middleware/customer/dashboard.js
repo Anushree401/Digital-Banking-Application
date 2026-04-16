@@ -180,23 +180,6 @@ function displayTransactions(transactions) {
 }
 
 function setupEventListeners() {
-    // Hamburger menu toggle
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    
-    hamburgerBtn.addEventListener('click', function() {
-        hamburgerBtn.classList.toggle('active');
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-    });
-    
-    overlay.addEventListener('click', function() {
-        hamburgerBtn.classList.remove('active');
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-    });
-
     document.getElementById('logoutBtn').addEventListener('click', async function() {
         // alert('Logout functionality will be implemented');
         await fetch('/api/logout', { method: 'POST', credentials: 'include' });
