@@ -1,17 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-    loadAccountsData();
+    loadAccounts();
     setupEventListeners();
 });
-
-function loadAccountsData() {
-    const mockAccounts = [
-        { id: 1, name: 'Primary Checking', number: '****7392', balance: 18420.50, type: 'Checking', status: 'Active' },
-        { id: 2, name: 'Emergency Fund', number: '****5801', balance: 15000.00, type: 'Savings', status: 'Active' },
-        { id: 3, name: 'Travel Reserve', number: '****2647', balance: 5000.00, type: 'Money Market', status: 'Active' }
-    ];
-
-    displayAccounts(mockAccounts);
-}
 
 document.addEventListener('DOMContentLoaded', loadAccounts);
 
@@ -39,17 +29,22 @@ function displayAccounts(accounts) {
     const container = document.getElementById('accountsList');
     container.innerHTML = '';
 
+    if (!accounts || accounts.length === 0) {
+        container.innerHTML = '<p>No accounts found</p>';
+        return;
+    }
+
     accounts.forEach(acc => {
         const div = document.createElement('div');
         div.className = 'account-item';
 
         div.innerHTML = `
             <div class="account-info">
-                <h4>${acc.acc_type.toUpperCase()} Account</h4>
-                <p>${acc.acc_no}</p>
+                <h4>${(acc.acc_type || 'Account').toUpperCase()}</h4>
+                <p>${acc.acc_no || 'N/A'}</p>
             </div>
             <div class="account-balance">
-                ₹${parseFloat(acc.balance).toLocaleString()}
+                ₹${Number(acc.balance || 0).toLocaleString()}
             </div>
         `;
 
@@ -79,19 +74,81 @@ function setupEventListeners() {
         window.location.href = '../shared/login.html';
     });
 
-    document.getElementById('openAccountBtn').addEventListener('click', function() {
-        alert('Open New Account functionality will be implemented');
+    document.getElementById('openAccountBtn').addEventListener('click', async function() {
+        const type = prompt("Enter account type (savings/current):");
+
+        if (!type) return;
+
+        try {
+            const res = await fetch('/api/accounts/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ acc_type: type })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error);
+                return;
+            }
+
+            alert("Account created!");
+            loadAccounts(); // refresh UI
+
+        } catch (err) {
+            console.error(err);
+        }
     });
 
-    document.getElementById('closeAccountBtn').addEventListener('click', function() {
-        alert('Close Account functionality will be implemented');
+    document.getElementById('closeAccountBtn').addEventListener('click', async function() {
+        const id = prompt("Enter Account ID to close:");
+
+        if (!id) return;
+
+        try {
+            const res = await fetch(`/api/accounts/close/${id}`, {
+                method: 'POST',
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error);
+                return;
+            }
+
+            alert("Account closed");
+            loadAccounts();
+
+        } catch (err) {
+            console.error(err);
+        }
     });
 
-    document.getElementById('downloadStatementBtn').addEventListener('click', function() {
-        alert('Download Statement functionality will be implemented');
+    document.getElementById('downloadStatementBtn').addEventListener('click', async function() {
+        const id = prompt("Enter Account ID:");
+
+        if (!id) return;
+
+        try {
+            const res = await fetch(`/api/accounts/${id}/transactions`, {
+                credentials: 'include'
+            });
+
+            const data = await res.json();
+
+            console.log("Transactions:", data);
+            alert("Check console for transactions");
+
+        } catch (err) {
+            console.error(err);
+        }
     });
 
     document.getElementById('updateDetailsBtn').addEventListener('click', function() {
-        alert('Update Details functionality will be implemented');
+        alert('Profile update coming soon');
     });
 }
