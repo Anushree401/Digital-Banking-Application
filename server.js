@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
+dotenv.config();
 const { sequelize } = require('./database/models');
 const path = require('path');
 const swaggerUi = require('swagger-ui-express');
@@ -10,7 +11,6 @@ const passport = require('./config/passport');
 sequelize.sync({ alter: true });
 
 const app = express();
-dotenv.config();
 const secret_key = process.env.SECRET_KEY_APP;
 
 // basic config 
@@ -139,7 +139,7 @@ app.use(
 );
 
 // auth routes
-app.use('/auth', require('./routes/authRoutes'));
+app.use('/auth', require('./views/routes/authRoutes'));
 
 // customer routes
 app.get('/customer/dashboard', (req, res) => {
@@ -212,15 +212,15 @@ app.get('/loan_officer/dashboard', (req, res) => {
 });
 
 // API routes
-app.use('/api/accounts', require('./routes/accountRoutes'));
-app.use('/api/transactions', require('./routes/transactionRoutes'));
-app.use('/api/cards', require('./routes/cardRoutes'));
-app.use('/api/loans', require('./routes/loanRoutes'));
-app.use('/api/fds', require('./routes/fdRoutes'));
-app.use('/api/investments', require('./routes/investmentRoutes'));
-app.use('/api/customers', require('./routes/customerRoutes'));
-app.use('/api/profile', require('./routes/profileRoutes'));
-app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/accounts', require('./views/routes/accountRoutes'));
+app.use('/api/transactions', require('./views/routes/transactionRoutes'));
+app.use('/api/cards', require('./views/routes/cardRoutes'));
+app.use('/api/loans', require('./views/routes/loanRoutes'));
+app.use('/api/fds', require('./views/routes/fdRoutes'));
+app.use('/api/investments', require('./views/routes/investmentRoutes'));
+app.use('/api/customers', require('./views/routes/customerRoutes'));
+app.use('/api/profile', require('./views/routes/profileRoutes'));
+app.use('/api/dashboard', require('./views/routes/dashboardRoutes'));
 
 // start server after db connect
 sequelize.authenticate()

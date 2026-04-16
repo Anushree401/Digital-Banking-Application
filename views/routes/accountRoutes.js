@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
 
-const { Account, AccountHolder, Customer } = require('../database/models');
-const { Transaction } = require('../database/models');
+const { Account, AccountHolder, Customer } = require('../../database/models');
+const { Transaction } = require('../../database/models');
 
 /**
  * @swagger

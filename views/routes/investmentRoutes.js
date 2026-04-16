@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Investor, Offer, Account, Customer, AccountHolder, Transaction  } = require('../database/models');
+const { Investor, Offer, Account, Customer, AccountHolder, Transaction  } = require('../../database/models');
 
 /**
  * @swagger

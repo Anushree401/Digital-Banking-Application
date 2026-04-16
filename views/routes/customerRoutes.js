@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const { Op } = require('sequelize');
 
-const { Customer, User, AccountHolder, Account, Loan } = require('../database/models');
-const { authorize } = require('../middleware/roleMiddleware');
+const { Customer, User, AccountHolder, Account, Loan } = require('../../database/models');
+const { authorize } = require('../../middleware/roleMiddleware');
 
 function maskValue(value, visible = 4) {
   if (!value) return '--';

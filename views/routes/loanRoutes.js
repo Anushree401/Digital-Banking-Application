@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { Loan, Customer, User, LoanOfficer } = require('../database/models');
-const { authorize } = require('../middleware/roleMiddleware');
+const { Loan, Customer, User, LoanOfficer } = require('../../database/models');
+const { authorize } = require('../../middleware/roleMiddleware');
 
 /**
  * @swagger
@@ -431,11 +431,15 @@ router.get('/:id/schedule', async (req, res) => {
     const tenure = Number(loan.tenure_months);
     const monthlyRate = ratePerAnnum / 12 / 100;
 
-    let emiAmount = loan.emi_amount;
-    if (!emiAmount) {
+    let emiAmount = Number(loan.emi_amount);
+    if (!emiAmount || Number.isNaN(emiAmount)) {
       emiAmount = monthlyRate > 0
         ? (principal * monthlyRate * Math.pow(1 + monthlyRate, tenure)) / (Math.pow(1 + monthlyRate, tenure) - 1)
         : (principal / tenure);
+    }
+
+    if (Number.isNaN(principal) || Number.isNaN(ratePerAnnum) || Number.isNaN(tenure) || Number.isNaN(emiAmount)) {
+      return res.status(400).json({ error: 'Invalid loan numeric data for schedule generation' });
     }
 
     // Generate EMI schedule

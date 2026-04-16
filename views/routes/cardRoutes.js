@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 
-const { Card, AccountHolder, Customer, Account, User } = require('../database/models');
-const { authorize } = require('../middleware/roleMiddleware');
-const { Transaction } = require('../database/models');
+const { Card, AccountHolder, Customer, Account, User } = require('../../database/models');
+const { authorize } = require('../../middleware/roleMiddleware');
+const { Transaction } = require('../../database/models');
 const { Op } = require('sequelize');
 
 /**

@@ -4,6 +4,18 @@ const authController = require('../controllers/authController');
 const path = require('path');
 const passport = require('passport');
 
+function ensureGoogleOAuthConfigured(req, res, next) {
+    const hasGoogleOAuthCredentials = Boolean(
+        process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    );
+
+    if (!hasGoogleOAuthCredentials) {
+        return res.redirect('/auth/login?error=google_disabled');
+    }
+
+    next();
+}
+
 // login routes -- get for rendering on browser, post for handling form submission
 /**
  * @swagger
@@ -101,6 +113,7 @@ router.post('/logout', (req, res) => {
  *         description: Redirects to Google login page
  */
 router.get('/google',
+    ensureGoogleOAuthConfigured,
     passport.authenticate('google', { scope: ['profile', 'email'] })
 );
 
@@ -118,6 +131,7 @@ router.get('/google',
  */
 // callback
 router.get('/google/callback',
+    ensureGoogleOAuthConfigured,
     passport.authenticate('google', { failureRedirect: '/auth/login?error=google' }),
     (req, res) => {
 

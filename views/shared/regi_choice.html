@@ -173,5 +173,22 @@ Already have an account?
 
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+	const params = new URLSearchParams(window.location.search);
+	const isGoogle = params.get('google') === '1';
+
+	if (!isGoogle) {
+		return;
+	}
+
+	document.querySelectorAll('.register-btn').forEach((link) => {
+		const url = new URL(link.getAttribute('href'), window.location.href);
+		url.searchParams.set('google', '1');
+		link.setAttribute('href', `${url.pathname.split('/').pop()}?${url.searchParams.toString()}`);
+	});
+});
+</script>
+
 </body>
 </html>

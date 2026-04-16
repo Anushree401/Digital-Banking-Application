@@ -129,7 +129,7 @@ height:34px;
 <nav></nav>
 
 <div class="register-brand">
-<img src="assets/brokebank_logo.svg" alt="BrokeBank logo">
+<img src="assets/brokebank_logo.png" alt="BrokeBank logo">
 <span>BrokeBank</span>
 </div>
 
@@ -175,7 +175,7 @@ height:34px;
 
 <div class="form-group full-width">
 <label for="password">Password</label>
-<input type="password" id="password" name="password" title="Password" required>
+<input type="password" id="password" name="password" title="Password">
 <small id="passStrength" style="margin-top:5px;"></small>
 </div>
 
@@ -245,9 +245,12 @@ Create Account
 <footer></footer>
 <script>
 // Handle role parameter from URL
+let isGoogleOnboarding = false;
+
 document.addEventListener('DOMContentLoaded', function() {
     const params = new URLSearchParams(window.location.search);
     const role = params.get('role');
+    isGoogleOnboarding = params.get('google') === '1';
     
     const roleMapping = {
         'customer': { title: 'Customer Registration', desc: 'Fill in your details to create an account' },
@@ -260,6 +263,43 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('registerTitle').textContent = roleMapping[role].title;
         document.getElementById('registerDesc').textContent = roleMapping[role].desc;
     }
+
+    if (!isGoogleOnboarding) {
+        return;
+    }
+
+    document.getElementById('registerDesc').textContent = 'Complete your profile to finish Google sign in';
+    document.getElementById('otpSection').style.display = 'none';
+
+    const passwordInput = document.getElementById('password');
+    passwordInput.required = false;
+    passwordInput.closest('.form-group').style.display = 'none';
+
+    fetch('/auth/google/pending')
+        .then((res) => {
+            if (!res.ok) {
+                throw new Error('Missing pending Google registration');
+            }
+            return res.json();
+        })
+        .then((data) => {
+            if (data.fname) {
+                document.getElementById('fname').value = data.fname;
+            }
+
+            if (data.lname) {
+                document.getElementById('lname').value = data.lname;
+            }
+
+            if (data.email) {
+                const emailField = document.getElementById('email');
+                emailField.value = data.email;
+                emailField.readOnly = true;
+            }
+        })
+        .catch(() => {
+            window.location.href = '/auth/login?error=google_session';
+        });
 });
 </script>
 <script src="../../middleware/shared/main.js"></script>
@@ -280,6 +320,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
     const aadhaar = document.querySelector('[name="aadhaar"]').value.trim();
 
     const errorBox = document.getElementById('formError');
+    const submitBtn = this.querySelector('button[type="submit"]');
     errorBox.innerText = '';
 
     // VALIDATIONS
@@ -295,7 +336,7 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         return;
     }
 
-    if (password.length < 6) {
+    if (!isGoogleOnboarding && password.length < 6) {
         errorBox.innerText = "Password must be at least 6 characters";
         return;
     }
@@ -310,22 +351,41 @@ document.querySelector('form').addEventListener('submit', async function(e) {
         return;
     }
 
+    if (isGoogleOnboarding) {
+        formRef.submit();
+        return;
+    }
+
     try {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Sending OTP...';
+
         // SEND OTP
-        await fetch('/auth/send-otp', {
+        const res = await fetch('/auth/send-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
 
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+            throw new Error(data.error || 'Failed to send OTP');
+        }
+
         // SHOW OTP SECTION
         document.getElementById('otpSection').style.display = 'block';
 
-        errorBox.innerText = "OTP sent to your email";
+        errorBox.style.color = 'green';
+        errorBox.innerText = data.message || "OTP sent to your email";
 
     } catch (err) {
         console.error(err);
-        errorBox.innerText = "Failed to send OTP";
+        errorBox.style.color = 'red';
+        errorBox.innerText = err.message || "Failed to send OTP";
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Create Account';
     }
 
 });

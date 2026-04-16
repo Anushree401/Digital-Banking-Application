@@ -43,7 +43,7 @@ function injectDashboardBrand() {
     logo.dataset.brandInjected = 'true';
 
     const homeUrl = new URL('../shared/index.html', window.location.href).href;
-    const logoUrl = new URL('../shared/assets/brokebank_logo.svg', window.location.href).href;
+    const logoUrl = new URL('../shared/assets/brokebank_logo.png', window.location.href).href;
 
     logo.innerHTML = `
         <a class="brand-link" href="${homeUrl}" aria-label="BrokeBank home">

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
-const { User, Customer } = require('../database/models');
+const crypto = require('crypto');
+const { User, Customer, LoanOfficer, Investor } = require('../database/models');
 // const { Pool } = require('pg');
 
 exports.login = async (email, password) => {
@@ -22,56 +23,29 @@ exports.login = async (email, password) => {
 
 exports.register = async (
     fname, lname, email, password, phone, role,
-    customerType, pan, aadhaar
+    customerType, pan, aadhaar, options = {}
 ) => {
+    const { isGoogleAuth = false } = options;
+    const normalizedRole = role === 'officer' ? 'loan_officer' : role;
 
     const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser) {
-
-        console.log("User exists → checking role entity...");
-
-        if (role === 'customer') {
-            let c = await Customer.findOne({ where: { user_id: existingUser.id } });
-
-            if (!c) {
-                await Customer.create({
-                    user_id: existingUser.id,
-                    customer_type: customerType || 'individual',
-                    pan_number: pan || 'ABCDE1234F',
-                    adhaar_number: aadhaar || '123456789012'
-                });
-                console.log("Customer created!");
-            }
-        }
-
-        else if (role === 'loan_officer') {
-            let l = await LoanOfficer.findOne({ where: { user_id: existingUser.id } });
-
-            if (!l) {
-                await LoanOfficer.create({
-                    user_id: existingUser.id
-                });
-                console.log("Loan Officer created!");
-            }
-        }
-
-        else if (role === 'investor') {
-            let i = await Investor.findOne({ where: { user_id: existingUser.id } });
-
-            if (!i) {
-                await Investor.create({
-                    user_id: existingUser.id
-                });
-                console.log("Investor created!");
-            }
-        }
-
-        return existingUser;
+        const err = new Error('User already exists');
+        err.code = 'USER_EXISTS';
+        throw err;
     }
 
+    if (!isGoogleAuth && !password) {
+        throw new Error('Password is required');
+    }
+
+    const rawPassword = isGoogleAuth
+        ? crypto.randomBytes(24).toString('hex')
+        : String(password);
+
     const salt = await bcrypt.genSalt(10);
-    const password_hash = await bcrypt.hash(password, salt);
+    const password_hash = await bcrypt.hash(rawPassword, salt);
 
     // CREATE USER
     const user = await User.create({
@@ -80,11 +54,11 @@ exports.register = async (
         email,
         password_hash,
         phone,
-        role
+        role: normalizedRole
     });
     console.log("User created:", user.id);
 
-    if (role === 'customer') {
+    if (normalizedRole === 'customer') {
         await Customer.create({
             user_id: user.id,
             customer_type: customerType || 'individual',
@@ -93,11 +67,17 @@ exports.register = async (
         });
 
         console.log("Customer created!");
-    } else if (role === 'loan_officer') {
-        await LoanOfficer.create({ user_id: user.id });
+    } else if (normalizedRole === 'loan_officer') {
+        await LoanOfficer.create({
+            user_id: user.id,
+            employee_id: `LO-${Date.now()}-${Math.floor(Math.random() * 1000)}`
+        });
     }
-    else if (role === 'investor') {
-        await Investor.create({ user_id: user.id });
+    else if (normalizedRole === 'investor') {
+        await Investor.create({
+            user_id: user.id,
+            risk_profile: 'moderate'
+        });
     }
 
     return user; // return full user
