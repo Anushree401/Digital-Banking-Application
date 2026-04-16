@@ -1,5 +1,5 @@
-const { User } = require('../database/models');
 const bcrypt = require('bcrypt');
+const { User, Customer } = require('../database/models');
 // const { Pool } = require('pg');
 
 exports.login = async (email, password) => {
@@ -20,20 +20,42 @@ exports.login = async (email, password) => {
 
 }
 
-exports.register = async (fname, lname, email, password, phone, role) => {
+exports.register = async (
+    fname, lname, email, password, phone, role,
+    customerType, pan, aadhaar
+) => {
 
-    // check if user email exitst
     const existingUser = await User.findOne({ where: { email } });
 
     if (existingUser) {
-        throw new Error('Email already exists');
+
+        console.log("User already exists, checking customer...");
+
+        if (role === 'customer') {
+
+            const existingCustomer = await Customer.findOne({
+                where: { user_id: existingUser.id }
+            });
+
+            if (!existingCustomer) {
+                await Customer.create({
+                    user_id: existingUser.id,
+                    customer_type: customerType || 'individual',
+                    pan_number: pan || 'ABCDE1234F',
+                    adhaar_number: aadhaar || '123456789012'
+                });
+
+                console.log("Customer created for existing user!");
+            }
+        }
+
+        return existingUser; // IMPORTANT
     }
 
-    // hash password
     const salt = await bcrypt.genSalt(10);
     const password_hash = await bcrypt.hash(password, salt);
 
-    // create user
+    // CREATE USER
     const user = await User.create({
         fname,
         lname,
@@ -42,30 +64,18 @@ exports.register = async (fname, lname, email, password, phone, role) => {
         phone,
         role
     });
+    console.log("User created:", user.id);
 
-    // const pool = new Pool({
-    //     user: 'postgres',
-    //     host: 'localhost',
-    //     database: 'test_db',
-    //     password: 'postgres',
-    //     port: 5432
-    // });
+    if (role === 'customer') {
+        await Customer.create({
+            user_id: user.id,
+            customer_type: customerType || 'individual',
+            pan_number: pan || 'ABCDE1234F',
+            adhaar_number: aadhaar || '123456789012'
+        });
 
-    // const client = await pool.connect();
+        console.log("Customer created!");
+    }
 
-    // try {   
-    //     const query = 'INSERT INTO users (fname, lname, email, password_hash, phone, role) VALUES ($1, $2, $3, $4, $5, $6)';
-    //     const values = [fname, lname, email, password_hash, phone, role];
-    //     await client.query(query, values);
-    // } catch (err) {
-    //     console.error('Error inserting user into database:', err);
-    //     throw err;
-    // } finally {
-    //     client.release();
-    // }
-
-    // const userId = await User.findOne({ where: { email } }).then(user => user.user_id);
-    const userId = user.user_id;
-    return userId;
-
+    return user; // return full user
 };

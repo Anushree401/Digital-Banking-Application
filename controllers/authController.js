@@ -44,10 +44,13 @@ exports.showRegister = (req,res) => {
 
 exports.registerUser = async (req,res) => {
 
-    const { fname, lname, email, password, phone, role } = req.body;
+    const { fname, lname, email, password, phone, role, customerType, pan, aadhaar } = req.body;
 
     try {
-        await authService.register(fname,lname,email,password,phone,role);
+        await authService.register(
+            fname, lname, email, password, phone, role,
+            customerType, pan, aadhaar
+        );
         res.redirect('/auth/login');
     } catch (err) {
         console.error(err);
